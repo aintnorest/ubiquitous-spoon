@@ -1,5 +1,5 @@
 # ubiquitous-spoon
-
+    Didn't want to waste time trying to name it.
 # MVP GOALS
     - Very simple chat for the purposes of finding people to play with.
     - Establish a peer to peer connection between the people playing.
@@ -17,3 +17,8 @@ Need to figure out what will be performant given the constraints.
     - div/spans using css shapes
     - svg
     - canvas
+
+Canvas was my initial thought but after a little reading it seems like canvas can have trouble when the render space of the canvas is really large.
+
+## Browser Support
+    Latest Chrome
