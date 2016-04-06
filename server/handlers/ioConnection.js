@@ -10,7 +10,7 @@ export default function(clients, mainRoom) {
         });
         //Disconnect Handler
         socket.on('disconnect', function() {
-            delete cliets[socket.id];
+            delete clients[socket.id];
             let slot = mainRoom.chatters.findIndex((s)=> {
                 if(s === socket) return true;
                 else return false;

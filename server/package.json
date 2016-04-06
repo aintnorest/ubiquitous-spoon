@@ -32,6 +32,8 @@
     "babel-register": "^6.6.0",
     "node-pre-gyp": "^0.6.23",
     "piping": "^0.3.0",
+    "socket.io-client": "^1.4.5",
+    "socket.io-p2p": "^2.2.0",
     "tape": "^4.5.0",
     "tape-promise": "^1.0.1"
   }
