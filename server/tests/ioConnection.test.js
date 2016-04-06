@@ -1,9 +1,11 @@
 import fs from 'fs';
 import tape from 'tape';
 import _test from 'tape-promise';
+import P2P from 'socket.io-p2p';
 import io from 'socket.io-client';
 //
 let socket = io();
+let p2p = new P2P(socket);
 //
 const test = _test(tape) // decorate tape
 //
