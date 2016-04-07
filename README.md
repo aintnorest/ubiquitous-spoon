@@ -7,6 +7,7 @@
  - Establish a peer to peer connection between the people playing.
  - Draggable circles that represent models in game.
  - Shared play space that updates real time using the peer to peer connection.
+ 
 ## Tech Stack
  - Server:
     - hapi js to serve the application and static files
