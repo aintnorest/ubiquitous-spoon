@@ -4,8 +4,6 @@ import _test from 'tape-promise';
 import P2P from 'socket.io-p2p';
 import io from 'socket.io-client';
 //
-let socket = io();
-let p2p = new P2P(socket);
 //
 const test = _test(tape) // decorate tape
 //
@@ -16,52 +14,55 @@ function delay (time) {
     }, time)
   })
 }
-//
-test('init', function(t) {
-    t.plan(1);
-    t.true(true,'just checking');
-});
 /*
-test('Ensure db file is created & initialized', function(t) {
-    //Make sure the File doesn't exists to start
-    let exists = fs.existsSync(filePath);
-    if(exists) fs.unlinkSync(filePath);
-    let db = database(filePath);
-    let authError, waitError;
-    //
-    db.serialize(function() {
-        //add a row to Authorized
-        db.run("insert into Authorized("
-            + "serial_number, first_name, last_name, email, phone_number, rank, company, phone_type, requestedPin, date_requested, auth_date, admin_authed, version_of_app, version_of_data, last_sync)"
-            + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            ["1234sn","Chris","Alatorre","cjalatorre@gmail.com","234-2355","private","rough neck","s7","345323","jan 3rd 2016","jan 4th 2016","admin bob","0.1.0","0.1","jan 4th 2016"],
-            (err) => {
-                if(err !== null) authError = err;
-            }
-        );
-        //add a row to Waiting
-        db.run("insert into Waiting("
-            + "serial_number, first_name, last_name, email, phone_number, rank, company, phone_type, requestedPin, date_requested, version_of_app, version_of_data, last_sync)"
-            + " values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            ["1234sn","Chris","Alatorre","cjalatorre@gmail.com","234-2355","private","rough neck","s7","235234","jan 3rd 2016","0.1.0","0.1","jan 4th 2016"],
-            (err) => {
-                if(err !== null) waitError = err;
-            }
-        );
-    });
-    return delay(1).then(function() {
-        t.true(fs.existsSync(filePath),'DB file is created.');
-        db.get("SELECT * FROM Authorized LIMIT 1",[],(err, row) => {
-            t.true(authError === undefined, "Authorized Table Exists.");
-            if(authError)console.log("Table insert error: ",authError);
-            t.true(row !== undefined,"Was able to retrieve a row from Authorized after inserting it.");
-            db.get("SELECT * FROM Waiting LIMIT 1",[],(errW, rowW) => {
-                t.true(waitError === undefined, "Waiting Table Exists.");
-                if(waitError)console.log("Table insert error: ",waitError);
-                t.true(rowW !== undefined,"Was able to retrieve a row from Waiting after inserting it.");
-                t.end();
-            });
-        });
-    })
-});
+    msg-format: {
+        sender: '', server || client Username
+        msg: '', txts msg
+        type: '', event || msg
+    }
 */
+test('init', function(t) {
+    t.plan(4);
+    let socket = io("http://localhost:4000");
+    let p2p = new P2P(socket,{peerOpts: {trickle: false}, autoUpgrade: false});
+    let tmpUsername = 'cja';
+    //Cleanup
+    window.onbeforeunload = function() { p2p.emit('disconnect'); }
+    /*
+    p2p.on('mainRoom-msg', function (data) {
+       console.log("data msg: ",data);
+    });
+
+    p2p.emit('signIn', 'cjalatorre');
+
+    p2p.on('usernameInvalid', function() {
+        console.log('username in use');
+    });
+
+    p2p.on('message', function(data) {
+        console.log("something being said in the mainRoom",data);
+    });
+
+    p2p.on('usersUpdate', function(data) {
+        console.log("new list of users in room",data);
+    });
+
+    p2p.emit('mainRoom-msg', {textVal: 'hello world'});
+    */
+    p2p.on('usernameValid', function() {
+        t.pass('signIn initiated and username valid');
+    });
+    p2p.on('usersUpdate', function(d) {
+        t.true(d.length > 0, 'room user list updated');
+    });
+    p2p.on('message', function(d) {
+        console.log('d',d);
+        if(d.msg === tmpUsername+' has entered the room') {
+            t.pass('Got entered room msg');
+        } else if(d.msg === 'hello world') {
+            t.pass('Got sent message');
+        }
+    });
+    p2p.emit('signIn', tmpUsername);
+    p2p.emit('mainRoom-msg', 'hello world');
+});

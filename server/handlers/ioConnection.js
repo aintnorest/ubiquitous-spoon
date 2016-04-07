@@ -1,38 +1,43 @@
-export default function(clients, mainRoom) {
+
+export default function(mainRoom, users, io) {
     return function(socket) {
-        clients[socket.id] = socket;
-        mainRoom.chatterCount++;
-        mainRoom.chatters.push(socket);
-        socket.join(mainRoom.name);
-        //Error Handler
-        socket.on('error', function (err) {
-            console.log("Error %s", err);
-        });
-        //Disconnect Handler
-        socket.on('disconnect', function() {
-            delete clients[socket.id];
-            let slot = mainRoom.chatters.findIndex((s)=> {
-                if(s === socket) return true;
-                else return false;
-            });
-            mainRoom.chatters.splice(slot, 1);
-            mainRoom.chatterCount--;
+        //Sign in
+        socket.on('signIn', function(username) {
+            if(users[username]) {
+                socket.emit('usernameInvalid');
+            } else {
+                socket.emit('usernameValid');
+                socket.username = username;
+                users[username] = socket;
+                mainRoom.userCount++;
+                mainRoom.users.push(username);
+                socket.join(mainRoom.name);
+                io.sockets.in(mainRoom.name).emit('message', {
+                    sender: 'server',
+                    msg: username+' has entered the room',
+                    type: 'event'
+                });
+                io.sockets.in(mainRoom.name).emit('usersUpdate', mainRoom.users);
+                //Disconnect Handler
+                socket.on('disconnect', function() {
+                    delete users[socket.username];
+                    let slot = mainRoom.users.findIndex((s)=> {
+                        if(s === username) return true;
+                        else return false;
+                    });
+                    mainRoom.users.splice(slot, 1);
+                    mainRoom.userCount--;
+                });
+            }
         });
         //Messages from main room
         socket.on('mainRoom-msg', function(data) {
-            socket.broadcast.to(mainRoom.name).emit('message',msg);
+            io.sockets.in(mainRoom.name).emit('message', {
+                sender: socket.username,
+                msg: data,
+                type: 'msg'
+            });
         });
         //
-
-        /*
-        socket.on('peer-msg', function(data) {
-            console.log('Message from peer: %s', data);
-            socket.broadcast.emit('peer-msg', data);
-        });
-
-        socket.on('go-private', function(data) {
-            socket.broadcast.emit('go-private', data);
-        });
-        */
     }
 }
