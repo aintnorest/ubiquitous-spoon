@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 //
 //
 const test = _test(tape) // decorate tape
-//
+//Helper functions
 function delay (time) {
   return new Promise(function (resolve, reject) {
     setTimeout(function () {
@@ -14,55 +14,75 @@ function delay (time) {
     }, time)
   })
 }
-/*
-    msg-format: {
-        sender: '', server || client Username
-        msg: '', txts msg
-        type: '', event || msg
+//
+function createSinglton(cb) {
+    let fired = false;
+    return function singleton(d) {
+        if(fired) return;
+        cb(d);
+        fired = true;
     }
-*/
-test('init', function(t) {
-    t.plan(4);
-    let socket = io("http://localhost:4000");
-    let p2p = new P2P(socket,{peerOpts: {trickle: false}, autoUpgrade: false});
-    let tmpUsername = 'cja';
-    //Cleanup
-    window.onbeforeunload = function() { p2p.emit('disconnect'); }
-    /*
-    p2p.on('mainRoom-msg', function (data) {
-       console.log("data msg: ",data);
+}
+//
+function setupSockets(username) {
+    let socket = io("http://localhost:4000", {forceNew: true, multiplex: false});
+    let setup = {};
+    setup.p2p = new P2P(socket, {autoUpgrade: false});
+    setup.username = username;
+    return setup;
+}
+//Integration tests
+test('socket.io integration test - login', function(t) {
+    //Setup
+    let s = setupSockets('buck');
+    let s2 = setupSockets('buck');
+    //
+    //t.plan(5);
+    //
+    s.p2p.on('usernameValid', function() {
+        t.pass('username was valid and user is logged in');
     });
-
-    p2p.emit('signIn', 'cjalatorre');
-
-    p2p.on('usernameInvalid', function() {
-        console.log('username in use');
+    s2.p2p.on('usernameInvalid', function() {
+        t.pass('username was invalid');
+        s.p2p.disconnect();
+        s2.p2p.disconnect();
+        //Makes sure both have time to disconnect before starting the next test.
+        setTimeout(function(){
+            t.end();
+        },15);
     });
-
-    p2p.on('message', function(data) {
-        console.log("something being said in the mainRoom",data);
+    s.p2p.on('roomUpdate', createSinglton(function(d) {
+        t.true(d.roomName == 'mainRoom','user joined the mainRoom');
+        t.true(d.userList[0] == s.username, 'user was add to room user list');
+    }));
+    s.p2p.on('messageToRoom', function(d) {
+        if(d.msg == 'buck has joined the room')t.pass('server sent joined message to the room');
     });
-
-    p2p.on('usersUpdate', function(data) {
-        console.log("new list of users in room",data);
-    });
-
-    p2p.emit('mainRoom-msg', {textVal: 'hello world'});
-    */
-    p2p.on('usernameValid', function() {
-        t.pass('signIn initiated and username valid');
-    });
-    p2p.on('usersUpdate', function(d) {
-        t.true(d.length > 0, 'room user list updated');
-    });
-    p2p.on('message', function(d) {
-        console.log('d',d);
-        if(d.msg === tmpUsername+' has entered the room') {
-            t.pass('Got entered room msg');
-        } else if(d.msg === 'hello world') {
-            t.pass('Got sent message');
-        }
-    });
-    p2p.emit('signIn', tmpUsername);
-    p2p.emit('mainRoom-msg', 'hello world');
+    //Init test
+    s.p2p.emit('signIn', s.username);
+    s2.p2p.emit('signIn', s2.username);
 });
+//
+test('socket.io integration test - messaging', function(t) {
+    //Setup
+    let s = setupSockets('chris');
+    let s2 = setupSockets('jess');
+    //
+    t.plan(2);
+    //
+    s.p2p.on('messageToRoom', function(d) {
+        if(d.type === 'event') return;
+        t.true(d.msg === ' hello', 'Received own message');
+    });
+    s2.p2p.on('messageToRoom', function(d) {
+        if(d.type === 'event') return;
+        t.true(d.msg === ' hello', 'Received chris message');
+    });
+    //
+    s.p2p.emit('signIn', s.username);
+    s2.p2p.emit('signIn', s2.username);
+    s.p2p.emit('messageToRoom',' hello');
+    //
+});
+//
+//

@@ -5,11 +5,13 @@ import fs from 'fs';
 //
 export default function(server, io) {
     const users = {};
-    const mainRoom = {users: [], userCount: 0, name:'mainRoom'};
+    const rooms = {
+        mainRoom: {users: [], userCount: 0}
+    };
     //
     server.register(Inert, () => {});
     //
-    io.on('connection', ioConnection(mainRoom, users, io));
+    io.on('connection', ioConnection(rooms, users, io));
     //
     server.route([
         //Serve Files out of the static folder
