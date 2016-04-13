@@ -1,29 +1,50 @@
-import { render } from 'react-dom';
+import { createDevTools } from 'redux-devtools';
+import LogMonitor from 'redux-devtools-log-monitor';
+import DockMonitor from 'redux-devtools-dock-monitor';
+
 import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { ReduxRouter } from 'redux-router';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
-import createStore from './store';
-import routes from './routes';
+import * as reducers from './reducers';
+import { App, Home, Foo, Bar } from './components';
 
-const store = createStore();
+const DevTools = createDevTools(
+    <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
+        <LogMonitor theme="tomorrow" preserveScrollTop={false} />
+    </DockMonitor>
+);
+
+const reducer = combineReducers({
+    ...reducers,
+    routing: routerReducer
+});
+
+const store = createStore(
+    reducer,
+    DevTools.instrument()
+);
 
 // for development convenience
 window.store = store;
 
+const history = syncHistoryWithStore(browserHistory, store);
 
-const appContainer = document.getElementById('app');
-
-
-const renderApp = routes => {
-	render(
-		<Provider store={store}>
-			<ReduxRouter>
-				{routes}
-			</ReduxRouter>
-		</Provider>,
-		appContainer
-	);
-};
-
-renderApp(routes);
+ReactDOM.render(
+    <Provider store={store}>
+        <div>
+            <Router history={history}>
+                <Route path="/" component={App}>
+                    <IndexRoute component={Home}/>
+                    <Route path="foo" component={Foo}/>
+                    <Route path="bar" component={Bar}/>
+                </Route>
+            </Router>
+            <DevTools />
+        </div>
+    </Provider>,
+    document.getElementById('app')
+);

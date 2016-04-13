@@ -1,1 +1,1 @@
-export const SET_WELCOME_MESSAGE = 'SET_WELCOME_MESSAGE';
+export const SET_APP_NAME = 'SET_APP_NAME';

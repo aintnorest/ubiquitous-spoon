@@ -1,17 +1,17 @@
 import _ from 'lodash';
 import {
-	SET_WELCOME_MESSAGE
+	SET_APP_NAME
 } from '../constants/action-types';
 
 let initialState = {
-	message: 'hello'
+	appName: 'Ubiquitous Spoon'
 };
 
-export default function welcome(state=initialState, action) {
+export default function app(state=initialState, action) {
 	switch (action.type) {
-		case SET_WELCOME_MESSAGE:
+		case SET_APP_NAME:
 			return _.assign({}, state, {
-				message: action.message
+				appName: action.appName
 			});
 
 		default:
