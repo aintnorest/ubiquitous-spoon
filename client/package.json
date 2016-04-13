@@ -4,6 +4,9 @@
   "description": "client testing out WebRTC using socketio",
   "main": "index.js",
   "dependencies": {},
+  "scripts": {
+    "build": "webpack --watch"
+  },
   "devDependencies": {
     "babel-core": "^6.7.4",
     "babel-loader": "^6.2.4",
