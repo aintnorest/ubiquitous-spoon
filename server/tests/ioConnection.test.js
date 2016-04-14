@@ -53,7 +53,7 @@ test('socket.io integration test - login', function(t) {
     });
     s.p2p.on('roomUpdate', createSinglton(function(d) {
         t.true(d.roomName == 'mainRoom','user joined the mainRoom');
-        t.true(d.userList[0] == s.username, 'user was add to room user list');
+        t.true(d.userList[0] == s.username, 'user was added to room user list');
     }));
     s.p2p.on('messageToRoom', function(d) {
         if(d.msg == 'buck has joined the room')t.pass('server sent joined message to the room');
@@ -72,16 +72,16 @@ test('socket.io integration test - messaging', function(t) {
     //
     s.p2p.on('messageToRoom', function(d) {
         if(d.type === 'event') return;
-        t.true(d.msg === ' hello', 'Received own message');
+        t.true(d.msg === 'hello', 'Received own message');
     });
     s2.p2p.on('messageToRoom', function(d) {
         if(d.type === 'event') return;
-        t.true(d.msg === ' hello', 'Received chris message');
+        t.true(d.msg === 'hello', 'Received chris message');
     });
     //
     s.p2p.emit('signIn', s.username);
     s2.p2p.emit('signIn', s2.username);
-    s.p2p.emit('messageToRoom',' hello');
+    s.p2p.emit('messageToRoom','hello');
     //
 });
 //
