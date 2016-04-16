@@ -6,12 +6,12 @@ import fs from 'fs';
 export default function(server, io) {
     const users = {};
     const rooms = {
-        mainRoom: {users: [], userCount: 0}
+        'mainRoom': {userList:[], roles:{}}
     };
     //
     server.register(Inert, () => {});
     //
-    io.on('connection', ioConnection(rooms, users, io));
+    io.on('connection', ioConnection(io, rooms, users));
     //
     server.route([
         //Serve Files out of the static folder

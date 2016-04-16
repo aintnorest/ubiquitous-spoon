@@ -1,100 +1,116 @@
-function createRoom(rooms, name) {
-    rooms[name] = {users: [], userCount: 0};
+import socketProxy from '../utils/socketProxy';
+//
+function createRoom(rooms, name, roles = {}) {
+    rooms[name] = {userList: [], roles};
 }
-
-export function leaveRoom(rooms, socket, io) {
-    socket.leave(socket.currentRoom);
-    let slot = rooms[socket.currentRoom].users.findIndex((s)=> {
-        if(s === socket.username) return true;
+//
+export function joinRoom(roomName, usersInfo, username, rooms, sp) {
+    sp.join(roomName);
+    rooms[roomName].userList.push(username);
+    usersInfo.currentRoom = roomName;
+    sp.in(roomName).emit('roomUpdate', {roomName, userList: rooms[roomName].userList});
+    sp.in(roomName).emit('messageToRoom', {
+        sender: 'server',
+        msg: username+' has joined the room.',
+        type: 'event'
+    });
+}
+//
+export function leaveRoom(sp, userInfo, username, rooms) {
+    sp.leave(userInfo.currentRoom);
+    let start = rooms[userInfo.currentRoom].userList.findIndex((s) => {
+        if(s === username) return true;
         else return false;
-    });
-    rooms[socket.currentRoom].users.splice(slot, 1);
-    rooms[socket.currentRoom].userCount--;
-    io.sockets.in(socket.currentRoom).emit('roomUpdate', {roomName: socket.currentRoom, userList: rooms[socket.currentRoom].users});
-    io.sockets.in(socket.currentRoom).emit('message', {
-        sender: 'server',
-        msg: socket.username+' has left the room',
-        type: 'event'
-    });
-    socket.currentRoom = "";
+    })
+    rooms[userInfo.currentRoom].userList.splice(start, 1);
+    if(rooms[userInfo.currentRoom].userList.length > 0) {
+        sp.in(userInfo.currentRoom).emit('roomUpdate', {
+            roomName: userInfo.currentRoom,
+            userList: rooms[userInfo.currentRoom].userList
+        });
+        sp.in(userInfo.currentRoom).emit('messageToRoom', {
+            sneder: 'server',
+            msg: username+' has left the room.',
+            type: 'event'
+        })
+    } else {
+        if(userInfo.currentRoom !== "mainRoom") delete rooms[userInfo.currentRoom]
+    }
+    userInfo.currentRoom = "";
 }
-
-export function joinRoom(roomName, rooms, socket, io) {
-    socket.join(roomName);
-    rooms[roomName].users.push(socket.username);
-    rooms[roomName].userCount++;
-    socket.currentRoom = roomName;
-    io.sockets.in(roomName).emit('roomUpdate', {roomName: roomName, userList: rooms[roomName].users});
-    io.sockets.in(roomName).emit('messageToRoom', {
-        sender: 'server',
-        msg: socket.username+' has joined the room',
-        type: 'event'
-    });
-}
-
-export default function(rooms, users, io) {
+//
+export default function(io, rooms, users) {
     return function(socket) {
-        console.log('Connecting: ',socket.id);
-        //Sign in
-        socket.on('signIn', function(username) {
-            if(users[username]) {
-                socket.emit('usernameInvalid');
+        console.log('how often am i called',socket.id);
+        let sp = new socketProxy(socket, io);
+        let username;
+        //Errors
+        sp.on('error', function(d) {
+            console.log(username+ " ERROR: ",d);
+        });
+        //Sign In
+        sp.on('signIn', function(un) {
+            if(users[un]) {
+                sp.emit('signIn', {response: false, reason: 'Username already in use'});
             } else {
-                console.log(username+' Connecting');
-                socket.emit('usernameValid');
-                socket.username = username;
-                socket.requestGameFrom = '';
-                users[username] = socket;
-                joinRoom('mainRoom', rooms, socket, io);
+                if(un.match(/^[0-9a-zA-Z]{3,16}$/)) {
+                    console.log(un+' Connecting');
+                    sp.emit('signIn', {response: true});
+                    username = un;
+                    users[un] = {
+                        sp,
+                        currentRoom: '',
+                        requestGame: ''
+                    };
+                    joinRoom('mainRoom', users[un], username, rooms, sp);
+                } else {
+                    sp.emit('signIn', {response: false, reason: 'Username must be alphanumeric and between 3 - 16 characters long.'});
+                }
             }
         });
         //Disconnect
-        socket.on('disconnect', function() {
-            if(socket.username) {
-                leaveRoom(rooms, socket, io)
-                delete users[socket.username];
+        sp.on('disconnect', function() {
+            if(username) {
+                if(users[username].currentRoom !== "") leaveRoom(sp, users[username], username, rooms);
+                delete users[username];
             }
-            console.log(socket.id + ' Disconnected');
+            console.log(username + ' Disconnected');
         });
-        //Errors
-        socket.on('error', function(d) {
-            console.log(socket.username+ " ERROR: ",d);
-        });
-        //Messages
-        socket.on('messageToRoom', function(data) {
-            io.in(socket.currentRoom).emit('messageToRoom', {
-                sender: socket.username,
+        //Messages To Room
+        sp.on('messageToRoom', function(data) {
+            sp.in(users[username].currentRoom).emit('messageToRoom', {
+                sender: username,
                 msg: data,
                 type: 'msg'
             });
         });
         //Request Game
-        socket.on('requestGame', function(usersName) {
-            if(users[usersName]) {
-                socket.requestGameFrom = users[usersName].id.valueOf();
-                users[usersName].emit('requestGame',{ asker: socket.username });
+        sp.on('requestGame', function(un) {
+            if(users[un]) {
+                users[username].requestGame = un;
+                users[un].sp.emit('requestGame', {asker: username});
             } else {
-                socket.emit('requestGame-response', {answer: false, reason:"User no longer exists."});
+                sp.emit('requestGame-response', {response: false, reason: "User no longer exists."})
             }
         });
         //Answer Request
-        socket.on('requestGame-response', function(d) {
-            if(d.answer) {
-                if(users[d.asker].requestGameFrom === socket.id.valueOf()) {
-                    let nrn = socket.username + users[d.asker].username + (Math.round(Math.random()*100) + 1);
-                    leaveRoom(rooms, socket, io);
-                    rooms[nrn] = createRoom(rooms, nrn);
-                    joinRoom(nrn, rooms, socket, io);
-                    io.sockets.in(rnr).emit('upgradeToP2P');
+        sp.on('requestGame-response', function(d) {
+            if(d.response) {
+                if(users[d.asker].requestGame === username) {
+                    let nrn = username + d.asker + (Math.round(Math.random()*100) + 1);
+                    createRoom(rooms, nrn, {player1:d.asker, player2:username});
+                    leaveRoom(sp, users[username], username, rooms);
+                    leaveRoom(users[d.asker].sp, users[d.asker], d.asker, rooms);
+                    joinRoom(nrn, users[username], username, rooms, sp);
+                    joinRoom(nrn, users[d.asker], d.asker, rooms, users[d.asker].sp);
+                    sp.in(nrn).emit('upgradeToP2P');
                 } else {
-                    io.sockets.connected[users[d.asker].id].emit('requestGame-response',{answer: false, reason:"User has requested a game from another player."});
+                    users[d.asker].sp.emit('requestGame-response', {answer: false, reason: "User has requested a game from another player."});
                 }
             } else {
-                users[d.asker].requestGameFrom = "";
-                io.sockets.connected[users[d.asker].id].emit('requestGame-response',{answer: false, reason: d.reason});
+                users[d.asker].requestGame = '';
+                users[d.asker].sp.emit('requestGame-response', {answer: false, reason: d.reason});
             }
         });
-        //
-        //
     }
 }
