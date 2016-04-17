@@ -24,10 +24,13 @@ function createSinglton(cb) {
     }
 }
 //
+//
 function setupSockets(username) {
-    let socket = io("http://localhost:4000", {forceNew: true, multiplex: false});
+    let socket = io("http://localhost:4000", {forceNew: true, multiplex: false });
     let setup = {};
-    setup.p2p = new P2P(socket, {autoUpgrade: false});
+    setup.p2p = new P2P(socket, {autoUpgrade: false}, function() {
+        console.log('does this function ever get called');
+    });
     setup.username = username;
     return setup;
 }
@@ -169,11 +172,13 @@ test('socket.io integration test - request game', function(t) {
         plan--;
         t.pass(s2.username+' User told to upgrade');
         s2.p2p.upgrade();
+        s2.p2p.useSockets = false;
     });
     s.p2p.on('upgradeToP2P', function() {
         plan--;
         t.pass(s.username+' User told to upgrade');
         s.p2p.upgrade();
+        s.p2p.useSockets = false;
         setTimeout(
             function(){
                 s.p2p.emit('messageToRoom',{
@@ -202,7 +207,7 @@ test('socket.io integration test - request game', function(t) {
         plan--;
         t.pass(s2.username+' User received p2p messageToRoom ' +JSON.stringify(d));
         if(plan === 0) {
-            console.log(' am i in here');
+            console.log(' how many times is s2 emiting hello back');
             s2.p2p.emit('messageToRoom',{
                 sender: s2.username,
                 msg: 'hello back',

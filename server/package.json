@@ -23,7 +23,8 @@
     "inert": "^3.2.0",
     "socket.io": "^1.4.5",
     "socket.io-client": "^1.4.5",
-    "socket.io-p2p-server": "^1.2.0"
+    "socket.io-p2p-server": "^1.2.0",
+    "webrtc-adapter": "^1.0.7"
   },
   "devDependencies": {
     "babel-polyfill": "^6.6.1",

@@ -34,14 +34,14 @@ export function leaveRoom(sp, userInfo, username, rooms) {
             type: 'event'
         })
     } else {
-        if(userInfo.currentRoom !== "mainRoom") delete rooms[userInfo.currentRoom]
+        if(userInfo.currentRoom !== "mainRoom") delete rooms[userInfo.currentRoom];
     }
     userInfo.currentRoom = "";
 }
 //
 export default function(io, rooms, users) {
     return function(socket) {
-        console.log('how often am i called',socket.id);
+        console.log('connection established for id: ',socket.id);
         let sp = new socketProxy(socket, io);
         let username;
         //Errors
