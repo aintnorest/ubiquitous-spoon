@@ -9,6 +9,8 @@ export default function App({ children }) {
         {' '}
         <Link to="/">Home</Link>
         {' '}
+        <Link to="/canvas">Canvas</Link>
+        {' '}
         <Link to="/foo">Foo</Link>
         {' '}
         <Link to="/bar">Bar</Link>

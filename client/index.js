@@ -10,7 +10,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
 import * as reducers from './reducers';
-import { App, Home, Foo, Bar } from './components';
+import { App, Home, Foo, Bar, Canvas } from './components';
 
 const DevTools = createDevTools(
     <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
@@ -39,6 +39,7 @@ ReactDOM.render(
             <Router history={history}>
                 <Route path="/" component={App}>
                     <IndexRoute component={Home}/>
+                    <Route path="canvas" component={Canvas}/>
                     <Route path="foo" component={Foo}/>
                     <Route path="bar" component={Bar}/>
                 </Route>
