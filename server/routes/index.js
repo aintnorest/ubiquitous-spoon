@@ -1,9 +1,17 @@
 import Path from 'path';
 import Inert from 'inert';
+import ioConnection from '../handlers/ioConnection';
 import fs from 'fs';
 //
 export default function(server, io) {
+    const users = {};
+    const rooms = {
+        'mainRoom': {userList:[], roles:{}}
+    };
+    //
     server.register(Inert, () => {});
+    //
+    io.on('connection', ioConnection(io, rooms, users));
     //
     server.route([
         //Serve Files out of the static folder
