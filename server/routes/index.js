@@ -23,6 +23,13 @@ export default function(server, io) {
                     path: Path.normalize(__dirname + '/../static')
                 }
             }
+        },
+        {
+            method: 'GET',
+            path: '/',
+            handler: function(request, reply) {
+                reply.file('static/index.html');
+            }
         }
     ]);
     //
