@@ -26,7 +26,7 @@ export default function(server, io) {
         },
         {
             method: 'GET',
-            path: '/',
+            path: '/{component?}',
             handler: function(request, reply) {
                 reply.file('static/index.html');
             }
