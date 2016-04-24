@@ -1,15 +1,15 @@
 import createReducer from '../utils/createReducer';
 import {
-    SET_WIDTH,
-    SET_HEIGHT
+    SET_CANVAS_WIDTH,
+    SET_CANVAS_HEIGHT
 } from '../constants/action-types';
 
 const initialState = {
-    width: 500,
-    height: 500
+    canvasWidth: 500,
+    canvasHeight: 500
 };
 
 export default createReducer(initialState, {
-    [SET_WIDTH]: (state, payload) => ({ ...state, width: payload }),
-    [SET_HEIGHT]: (state, payload) => ({ ...state, height: payload })
+    [SET_CANVAS_WIDTH]: (state, payload) => ({ ...state, canvasWidth: payload }),
+    [SET_CANVAS_HEIGHT]: (state, payload) => ({ ...state, canvasHeight: payload })
 });

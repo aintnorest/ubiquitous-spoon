@@ -13,7 +13,17 @@ module.exports = {
         publicPath: '/'
     },
     module: {
+        postLoaders: [
+            {
+                loader: "transform?brfs"
+            }
+        ],
         loaders: [
+            {
+                test: /\.png$/,
+                loader: "url-loader",
+                query: { mimetype: "image/png" }
+            },
             {
                 test: /\.(jsx|js)$/,
                 exclude: /node_modules/,

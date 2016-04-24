@@ -1,15 +1,15 @@
 import * as types from '../constants/action-types';
 
-export function setWidth(width) {
+export function setCanvasWidth(canvasWidth) {
     return {
-       type: types.SET_WIDTH,
-       payload: width
+       type: types.SET_CANVAS_WIDTH,
+       payload: canvasWidth
     };
 }
 
-export function setHeight(height) {
+export function setCanvasHeight(canvasHeight) {
     return {
-       type: types.SET_HEIGHT,
-       payload: height
+       type: types.SET_CANVAS_HEIGHT,
+       payload: canvasHeight
     };
 }
