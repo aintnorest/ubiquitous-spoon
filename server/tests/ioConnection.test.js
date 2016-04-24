@@ -1,11 +1,114 @@
 import fs from 'fs';
 import tape from 'tape';
 import _test from 'tape-promise';
-import P2P from 'socket.io-p2p';
-import io from 'socket.io-client';
+//import P2P from 'socket.io-p2p';
+//import io from 'socket.io-client';
+import SocketProxy from './utils/clientSocketProxy';
 //
 //
 const test = _test(tape) // decorate tape
+
+test('socket.io integration test - login', function(t) {
+    let s = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    let s2 = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    //
+    s.signIn('chris').then(function(d) {
+        t.pass('Signed in: ' + JSON.stringify(d));
+        //Check if you can sign in twice;
+        s.signIn('bob').then(function(d) {
+            t.fail('Shouldnt let me signin twice: '+ JSON.stringify(d));
+        }).catch(function(d) {
+            t.pass('Didnt let me signin twice: '+ JSON.stringify(d));
+        });
+    }).catch(function(d) {
+        t.fail('Failed to sign in: ' + JSON.stringify(d));
+    });
+    //
+    s2.signIn('chris').then(function(d) {
+        t.fail('Same name shouldnt have accepted: ' + JSON.stringify(d));
+        setTimeout(function(){s.disconnect(); s2.disconnect();
+        t.end();},2000);
+    }).catch(function(d) {
+        t.pass('Same name was supposed to fail: ' + JSON.stringify(d));
+        setTimeout(function(){s.disconnect(); s2.disconnect();
+        t.end();},2000);
+    });
+    //
+});
+//
+test('socket.io integration test - messaging', function(t) {
+    let s = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    let s2 = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    //
+    s.signIn('TimTheEnchanter').then(function(d){
+        s.listenToRoom(function(msg){
+            if(msg.type == 'event') return;
+            t.pass('Received Msg: '+JSON.stringify(msg));
+            if(msg.msg == 'Hi Tim!'){
+                console.log('sent once:');
+                s.messageToRoom('Hello Knights').then(function(res) {
+                    t.pass('Return Message: '+JSON.stringify(res));
+                }).catch(function(rej) {
+                    console.log('response failed',rej);
+                });
+            }
+            setTimeout(function(){
+                s.disconnect();
+                s2.disconnect();
+                t.end();
+            },5000);
+        });
+    }).catch(function(d){
+        t.fail('Failed to login: '+JSON.stringify(d));
+    });
+    s2.signIn('KnightsOfNee').then(function(){
+        s2.listenToRoom(function(msg){
+            console.log('Messages from the Room As The Knights hear it',msg);
+        });
+        s2.messageToRoom('Hi Tim!').then(function(d){
+            t.pass('Message Confirmed sent from the Knights');
+        }).catch(function(d){
+            t.fail('Message timed out sending from the Knights');
+        });
+    }).catch(function(d){
+        t.fail('Failed to login: '+JSON.stringify(d));
+    });
+});
+//
+test('socket.io integration test - request game', function(t) {
+    let s = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    let s2 = new SocketProxy("http://localhost:4000", {forceNew: true, multiplex: false });
+    //
+    s.signIn('Bill');
+    s2.signIn('Bob');
+    //
+    s2.listenForGameRequest(function(req) {
+        return new Promise(function(resolve, reject) {
+            console.log('im asked for a game:',req);
+            if(req.asker == 'Bill') {
+                resolve(function(){
+                    t.pass('resolved good');
+                    t.end();
+                });
+            } else {
+                reject(function() {
+                    t.fail('failed');
+                    t.end();
+                });
+            }
+        });
+    });
+    //
+    s.requestGame('Bob').then(function(d) {
+        console.log('bob has joined game');
+        t.end();
+    }).catch(function(d){
+        console.log('bob did not join the game');
+        t.end();
+    });
+});
+
+/*
 //Helper functions
 function delay (time) {
   return new Promise(function (resolve, reject) {
@@ -121,7 +224,7 @@ test('socket.io integration test - messaging', function(t) {
     //
     s.p2p.emit('signIn', s.username);
     s2.p2p.emit('signIn', s2.username);
-    s.p2p.emit('messageToRoom','hello');
+    s.p2p.emit('messageToRoom',{msg:'hello'});
     //
 });
 //
@@ -190,19 +293,30 @@ test('socket.io integration test - request game', function(t) {
             },400);
     });
 
-
     s.p2p.on('messageToRoom', function(d){
         if(d.msg !== 'hello back') return;
         plan--;
         t.pass(s.username+' User received p2p messageToRoom ' +JSON.stringify(d));
-        setTimeout(function(){
-            s.p2p.disconnect();
-            s2.p2p.disconnect();
-        },4000)
-        setTimeout(function() {t.end();},6000);
+        console.log('plan',plan);
+        if(plan == -2) {
+            s.p2p.emit('messageToRoom',{
+                sender: s.username,
+                msg: 'not a first message',
+                type: 'msg',
+                timeStamp: Date.now()
+            });
+        }
     });
 
     s2.p2p.on('messageToRoom', function(d){
+        if(d.msg == 'not a first message') {
+            t.pass(s.username+' user received 2nd message to room'+JSON.stringify(d));
+            setTimeout(function(){
+                s.p2p.disconnect();
+                s2.p2p.disconnect();
+            },4000)
+            setTimeout(function() {t.end();},6000);
+        }
         if(d.msg !== 'hello') return;
         plan--;
         t.pass(s2.username+' User received p2p messageToRoom ' +JSON.stringify(d));
@@ -221,4 +335,4 @@ test('socket.io integration test - request game', function(t) {
 
 });
 //
-//
+*/

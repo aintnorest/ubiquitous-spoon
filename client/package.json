@@ -4,7 +4,8 @@
   "description": "client testing out WebRTC using socketio",
   "main": "index.js",
   "dependencies": {
-    "react-canvas": "^1.1.0"
+    "react-canvas": "^1.1.0",
+    "react-router": "^2.3.0"
   },
   "scripts": {
     "build": "webpack --watch"
