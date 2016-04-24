@@ -4,6 +4,7 @@
   "description": "client testing out WebRTC using socketio",
   "main": "index.js",
   "dependencies": {
+    "brfs-babel": "^1.0.0",
     "react-canvas": "^1.1.0"
   },
   "scripts": {
