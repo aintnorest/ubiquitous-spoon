@@ -1,23 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actions from '../actions/app';
+import * as actions from '../actions/home';
 
-function Home({ appName, setAppName }) {
+function Home({ homeTitle, setHomeTitle }) {
     return (
         <div>
-            App Name:
-            <h3>{appName}</h3>
+            Home Title:
+            <h3>{homeTitle}</h3>
             <br />
             <input type="text"
-                value={appName}
-                onChange={(event) => setAppName(event.target.value)}
+                value={homeTitle}
+                onChange={(event) => setHomeTitle(event.target.value)}
             />
         </div>
     );
 }
 
 export default connect(
-    (state) => state.appReducer,
+    (state) => state.homeReducer,
     (dispatch) => bindActionCreators(actions, dispatch)
 )(Home);
