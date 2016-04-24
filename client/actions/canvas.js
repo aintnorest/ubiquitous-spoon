@@ -14,6 +14,20 @@ export function setCanvasHeight(canvasHeight) {
     };
 }
 
+export function setModelCoordinates(modelX, modelY) {
+    return {
+       type: types.SET_MODEL_COORDINATES,
+       payload: { modelX, modelY }
+    };
+}
+
+export function setDragging(dragging) {
+    return {
+       type: types.SET_DRAGGING,
+       payload: dragging
+    };
+}
+
 export function onModelSelect() {
     return {
        type: types.ON_MODEL_SELECT
