@@ -5,5 +5,6 @@ export const SET_APP_NAME = 'SET_APP_NAME';
 export const SET_HOME_TITLE = 'SET_HOME_TITLE';
 
 // CANVAS
-export const SET_CANVAS_WIDTH = 'SET_WIDTH';
-export const SET_CANVAS_HEIGHT = 'SET_HEIGHT';
+export const SET_CANVAS_WIDTH = 'SET_CANVAS_WIDTH';
+export const SET_CANVAS_HEIGHT = 'SET_CANVAS_HEIGHT';
+export const ON_MODEL_SELECT = 'ON_MODEL_SELECT';

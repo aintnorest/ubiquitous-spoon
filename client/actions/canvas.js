@@ -13,3 +13,9 @@ export function setCanvasHeight(canvasHeight) {
        payload: canvasHeight
     };
 }
+
+export function onModelSelect() {
+    return {
+       type: types.ON_MODEL_SELECT
+    };
+}
