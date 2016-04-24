@@ -1,17 +1,15 @@
 import Path from 'path';
 import Inert from 'inert';
 import ioConnection from '../handlers/ioConnection';
+import Chat from '../utils/chat';
 import fs from 'fs';
 //
 export default function(server, io) {
-    const users = {};
-    const rooms = {
-        'mainRoom': {userList:[], roles:{}}
-    };
+    const chat = new Chat({ 'mainRoom': {userList:[], roles:{}, options:{ permanent:true } } });
     //
     server.register(Inert, () => {});
     //
-    io.on('connection', ioConnection(io, rooms, users));
+    io.on('connection', ioConnection(io, chat));
     //
     server.route([
         //Serve Files out of the static folder
