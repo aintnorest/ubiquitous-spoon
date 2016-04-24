@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "client testing out WebRTC using socketio",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "react-router": "^2.3.0"
+  },
   "scripts": {
     "build": "webpack --watch"
   },
