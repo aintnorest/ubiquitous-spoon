@@ -4,10 +4,11 @@
   "description": "client testing out WebRTC using socketio",
   "main": "index.js",
   "dependencies": {
+    "brfs": "^1.4.3",
+    "brfs-babel": "^1.0.0",
     "react-canvas": "^1.1.0",
     "react-router": "^2.3.0",
-    "brfs-babel": "^1.0.0",
-    "react-canvas": "^1.1.0"
+    "redux-thunk": "^2.0.1"
   },
   "scripts": {
     "build": "webpack --watch"

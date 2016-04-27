@@ -4,7 +4,8 @@ import {
 } from '../constants/action-types';
 
 const initialState = {
-    appName: 'Ubiquitous Spoon'
+    appName: 'Ubiquitous Spoon',
+    userName: 'test'
 };
 
 export default createReducer(initialState, {

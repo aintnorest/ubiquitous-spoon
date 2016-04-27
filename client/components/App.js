@@ -1,10 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actions from '../actions/home';
+import * as actions from '../actions/app';
 import { Link, browserHistory } from 'react-router'
 
-function App({ appName, children }) {
+function App({ appName, signIn, children }) {
     return (
         <div>
             <h1>{appName}</h1>
@@ -20,7 +20,7 @@ function App({ appName, children }) {
                 <Link to="/bar">Bar</Link>
             </header>
             <div>
-                <button onClick={() => browserHistory.push('/foo')}>Go to /foo</button>
+                <button onClick={()=>signIn()}>Sign in</button>
             </div>
             <div style={{ marginTop: '1.5em' }}>{children}</div>
         </div>

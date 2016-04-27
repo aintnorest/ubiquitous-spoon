@@ -1,5 +1,6 @@
 // APP
 export const SET_APP_NAME = 'SET_APP_NAME';
+export const ON_USER_SIGN_IN = 'ON_USER_SIGN_IN';
 
 // HOME
 export const SET_HOME_TITLE = 'SET_HOME_TITLE';
