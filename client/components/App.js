@@ -22,7 +22,7 @@ function App({ userName, setUserName, signIn, children }) {
             <div>
                 <input
                     type='text'
-                    defaultValue='User'
+                    placeholder='User'
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                 />
