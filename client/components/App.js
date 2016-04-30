@@ -56,5 +56,5 @@ function App(props) {
 
 export default connect(
     (state) => state.appReducer,
-        (dispatch) => bindActionCreators(actions, dispatch)
+    (dispatch) => bindActionCreators(actions, dispatch)
 )(App);
