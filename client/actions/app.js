@@ -8,11 +8,10 @@ let socketProxy;
 
 export function signIn() {
     return (dispatch, getState) => {
-        let userName = getState().appReducer.userName;
-        let socketConfig = {forceNew: false, multiplex: false};
+        const socketConfig = {forceNew: false, multiplex: false};
         socketProxy = new SocketProxy(serverURL, socketConfig);
-        socketProxy.signIn(userName).then(() => {
-            console.log('signed in');
+        const userName = getState().appReducer.userName;
+        return socketProxy.signIn(userName).then(() => {
             dispatch(redirect('/foo'));
         }).catch((e) => {
             console.log(`Error logging in: ${JSON.stringify(e)}`);
