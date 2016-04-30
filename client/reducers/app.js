@@ -1,13 +1,10 @@
 import createReducer from '../utils/createReducer';
-import {
-    SET_APP_NAME
-} from '../constants/action-types';
+import * as types from '../constants/action-types';
 
 const initialState = {
-    appName: 'Ubiquitous Spoon',
-    userName: 'test'
+    userName: null
 };
 
 export default createReducer(initialState, {
-    [SET_APP_NAME]: (state, payload) => ({ ...state, appName: payload })
+    [types.SET_USER_NAME]: (state, payload) => ({ ...state, userName: payload })
 });

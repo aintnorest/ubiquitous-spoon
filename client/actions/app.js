@@ -1,5 +1,4 @@
-// import P2P from 'socket.io-p2p';
-// import io from 'socket.io-client';
+import { push } from 'react-router-redux'
 
 import * as types from '../constants/action-types';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
@@ -13,19 +12,21 @@ export function signIn() {
         let socketConfig = {forceNew: false, multiplex: false};
         socketProxy = new SocketProxy(serverURL, socketConfig);
         socketProxy.signIn(userName).then(() => {
-            // dispatch({type: types.ON_USER_SIGN_IN});
             console.log('signed in');
+            dispatch(redirect('/foo'));
         }).catch((e) => {
             console.log(`Error logging in: ${JSON.stringify(e)}`);
         });
     };
 }
 
-export function setAppName(appName) {
+export function setUserName(userName) {
     return {
-       type: types.SET_APP_NAME,
-       payload: appName
+       type: types.SET_USER_NAME,
+       payload: userName
     };
 }
 
-
+export function redirect(route) {
+    return push(route);
+}
