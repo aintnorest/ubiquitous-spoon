@@ -1,6 +1,7 @@
 // APP
 export const SET_USER_NAME = 'SET_USER_NAME';
-export const ON_USER_SIGN_IN = 'ON_USER_SIGN_IN';
+export const SET_SIGNED_IN = 'SET_SIGNED_IN';
+export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 
 // HOME
 export const SET_HOME_TITLE = 'SET_HOME_TITLE';
