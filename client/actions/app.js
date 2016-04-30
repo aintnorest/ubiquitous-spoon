@@ -19,13 +19,13 @@ export function signIn() {
     };
 }
 
+export function redirect(route) {
+    return push(route);
+}
+
 export function setUserName(userName) {
     return {
        type: types.SET_USER_NAME,
        payload: userName
     };
-}
-
-export function redirect(route) {
-    return push(route);
 }

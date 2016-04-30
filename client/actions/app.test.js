@@ -21,3 +21,17 @@ test('signIn', (assert) => {
         assert.end();
     });
 });
+
+test('redirect', (assert) => {
+    assert.plan(3);
+    const route = '/foo';
+    const push = sinon.stub().returns(route);
+    rewireAPI.__Rewire__('push', push);
+
+    const result = redirect(route);
+
+    assert.equals(push.called, true, 'should call `push`');
+    assert.equals(push.getCall(0).calledWith(route), true, 'should call `dispatch` with `redirect(' + route + ')`');
+    assert.equals(result, route, 'should return the result of `push`');
+    assert.end();
+});
