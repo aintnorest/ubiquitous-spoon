@@ -1,13 +1,13 @@
 import { createDevTools } from 'redux-devtools';
 import LogMonitor from 'redux-devtools-log-monitor';
 import DockMonitor from 'redux-devtools-dock-monitor';
-
+import thunk from 'redux-thunk';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 
 import * as reducers from './reducers';
 import { App, Home, Foo, Bar, Canvas } from './components';
@@ -24,8 +24,12 @@ const reducer = combineReducers({
 });
 
 const store = createStore(
-    reducer,
+  reducer,
+  compose(
+    applyMiddleware(thunk),
+    applyMiddleware(routerMiddleware(browserHistory)),
     DevTools.instrument()
+  )
 );
 
 // for development convenience

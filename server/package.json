@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/aintnorest/strykerServer#readme",
   "dependencies": {
+    "brfs": "^1.4.3",
     "hapi": "^13.0.0",
     "inert": "^3.2.0",
     "socket.io": "^1.4.5",
