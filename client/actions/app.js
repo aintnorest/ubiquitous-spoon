@@ -3,19 +3,22 @@ import { push } from 'react-router-redux'
 import * as types from '../constants/action-types';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
 
-const serverURL = 'http://localhost:4000';
-let socketProxy;
+const serverURL = 'ws://localhost:4000';
+let socketProxy = new SocketProxy(serverURL);
+
+socketProxy.ws.onopen = function() {
+    console.log('socket open!');
+}
 
 export function signIn() {
     return (dispatch, getState) => {
-        const socketConfig = {forceNew: false, multiplex: false};
-        socketProxy = new SocketProxy(serverURL, socketConfig);
         const userName = getState().appReducer.userName;
         return socketProxy.signIn(userName).then(() => {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
             dispatch(redirect('/foo'));
         }).catch((e) => {
+            console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));
             dispatch(setSignedIn(false));
         });
