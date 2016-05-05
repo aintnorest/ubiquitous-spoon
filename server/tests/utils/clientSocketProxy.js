@@ -11,6 +11,15 @@ function tryParseJSON (jsonString){
     return jsonString;
 };
 //
+function localDescCreated(desc) {
+    let self = this;
+    self.pc.setLocalDescription(desc, function () {
+        self.emit('setLocalDescription',self.pc.localDescription);
+    }, function(err) {
+        console.log('localDescCreated error: ',err);
+    });
+}
+//
 export default function SocketProxy(url, protocols = {}) {
     let self = this;
     this.ws = new WebSocket(url);
@@ -71,16 +80,14 @@ export default function SocketProxy(url, protocols = {}) {
 SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {
     let self = this;
     self.on('setLocalDescription', function(msg) {
-        console.log('setLocalDescription, ',msg);
-        self.pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function() {
+        let sd = new RTCSessionDescription(msg);
+        self.pc.setRemoteDescription(sd, function() {
             if(self.pc.remoteDescription.type == 'offer') {
-                self.pc.createAnswer(function(desc){
-                    self.pc.setLocalDescription(desc, function () {
-                        self.emit('setLocalDescription',self.pc.localDescription);
-                    }, function(err){ console.log("Error setting localDescription inside answer: ",err); });
-                }, function(err){
-                    console.log('Error creating answer: ',err);
-                });
+                self.pc.createAnswer(localDescCreated.bind(self),
+                    function(err){
+                        console.log('Error creating answer: ',err);
+                    }
+                );
             }
         });
     });
@@ -96,16 +103,11 @@ SocketProxy.prototype.upgradeToP2P = function(resolve) {
     // send any ice candidates to the other peer
     self.pc.onicecandidate = function (e) {
         if (!e || !e.candidate) return;
-        console.log(e);
+        console.log('onicecandidate: ',e);
     };
     // let the 'negotiationneeded' event trigger offer generation
     self.pc.onnegotiationneeded = function () {
-        console.log('negotiation Needed')
-        self.pc.createOffer(function(desc) {
-            self.pc.setLocalDescription(desc, function () {
-                self.emit('setLocalDescription',self.pc.localDescription);
-            }, function(err) { console.log('Set Local Description Error: ',err); });
-        }, function(err) { console.log('Create Offer Error: ',err); });
+        self.pc.createOffer(localDescCreated.bind(self), function(err) { console.log('Create Offer Error: ',err); });
     }
     /*
     let self = this;
