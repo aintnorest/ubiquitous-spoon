@@ -99,7 +99,7 @@ test('socket.io integration test - request game', function(t) {
                 s2.disconnect();
                 t.end();
             }
-        },15000);
+        },4000);
     };
 
     Promise.all([
@@ -112,9 +112,23 @@ test('socket.io integration test - request game', function(t) {
             });
         });
         s2.requestGame('Christopher').then(function(d) {
-            console.log('Accepted game',d);
+            setTimeout(function() {
+                //set this so that s is ready with p2p initialized;
+                try{
+                    s.p2p.on("chat",function(msg) {
+                        t.pass('p2p message recieved');
+                    });
+                } catch(err) {
+                    console.log('had some trouble with the p2p');
+                }
+                try {
+                    s2.p2p.emit("chat","hi!");
+                } catch(err) {
+                    console.log('had some trouble with the p2p emitter');
+                }
+                cleanup(true);
+            },3000);
             t.pass('Game Accepted');
-            cleanup(true);
         }).catch(function(d) {
             t.fail('Game Denied');
             cleanup(true);

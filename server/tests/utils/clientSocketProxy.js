@@ -30,35 +30,11 @@ export default function SocketProxy(url, protocols = {}) {
         optional: [{RtpDataChannels: false}]
     });
     this.dataChannel = undefined;
-    /*
-    this.pc = new RTCPeerConnection({
-        iceServers: [{ 'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]
-    },{
-        optional: [{RtpDataChannels: false}]
-    });
-    this.pc.onicecandidate = function(e) {
-        if (!e || !e.candidate) return;
-        let o;
-        try {
-            o = e.candidate.toJSON();
-        } catch(err) {
-            console.log('error trying toJSON on ice candidate: ',err);
-        }
-        o = e.candidate;
-        try {
-            if(typeof o === 'string') o = JSON.parse(o);
-        } catch(err) {
-            console.log('trouble is inside on ice: ',err);
-        }
-        self.iceCandidate = o;
-        self.emit('iceCandidate',self.iceCandidate);
-    };
-    this.iceCandidate = undefined;
-    this.dataChannel = undefined;
+    this.p2p = {};
     this.p2pMode = false;
-    */
     this.ready = false;
     this.username = '';
+    this.p2pMessageListeners = {};
     this.messageListeners = {};
     this.ws.onmessage = function (msg) {
         if(msg.origin != url) return;
@@ -75,12 +51,33 @@ export default function SocketProxy(url, protocols = {}) {
         self.buffer.forEach(function(msg) {
             self.emit(msg.channel, msg.msg);
         });
-        self.on('iceCandidate', function(candidate) {
+        self.on('addIceCandidate', function(candidate) {
             console.log(self.username,' add ice candidate');
             self.pc.addIceCandidate(new RTCIceCandidate(candidate));
         });
     };
 }
+//
+SocketProxy.prototype.setupP2Pmessaging = function() {
+    let self = this;
+    self.dataChannel.onmessage = function(msg) {
+        let parsedMsg = tryParseJSON(msg.data);
+        Object.keys(self.p2pMessageListeners).forEach((channel) => {
+            if(channel == parsedMsg.channel) self.p2pMessageListeners[channel].forEach((cb) => {cb(parsedMsg.msg)})
+        })
+    };
+    self.p2p.on = function(channel, cb) {
+        if(!self.p2pMessageListeners[channel]) self.p2pMessageListeners[channel] = [cb];
+        else self.p2pMessageListeners[channel].push(cb);
+        return function() {
+            self.p2pMessageListeners[channel].splice(self.p2pMessageListeners[channel].findIndex((c) => c === cb), 1);
+        }
+    };
+    self.p2p.emit = function(channel, msg) {
+        self.dataChannel.send(JSON.stringify({channel,msg}));
+    };
+
+};
 //
 SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {
     let self = this;
@@ -102,8 +99,10 @@ SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {
     });
 
     self.pc.ondatachannel = function (evt) {
-        console.log('open data channel');
+        self.p2pMode = true;
+        console.log(self.username,' Data channel opened: ');
         self.dataChannel = evt.channel;
+        self.setupP2Pmessaging();
     };
 };
 //
@@ -113,9 +112,12 @@ SocketProxy.prototype.upgradeToP2P = function(resolve) {
     this.dataChannel = this.pc.createDataChannel('gameChannel');
     self.dataChannel.onopen = function(d) {
         console.log(self.username,' Data channel opened: ',d);
+        self.p2pMode = true;
+        self.setupP2Pmessaging();
+        resolve();
     };
     self.dataChannel.onerror = function(err) { console.log('DataChannel Error: ',err); };
-    // let the 'negotiationneeded' event trigger offer generation
+
     self.pc.onnegotiationneeded = function () {
         console.log(self.username, 'create offer');
         self.pc.createOffer(localDescCreated.bind(self), function(err) { console.log('Create Offer Error: ',err); });
@@ -124,7 +126,6 @@ SocketProxy.prototype.upgradeToP2P = function(resolve) {
     self.on('setLocalDescription', function(msg) {
         console.log(self.username, ' set remote description');
         self.pc.setRemoteDescription(new RTCSessionDescription(msg), function() {
-            // send any ice candidates to the other peer
             self.pc.onicecandidate = function (e) {
                 if (!e || !e.candidate) return;
                 console.log(self.username, ' ice candidate on');
@@ -246,29 +247,6 @@ SocketProxy.prototype.requestGame = function(un) {
         responseHandler = function(d) {
             if(d.response) {
                 self.upgradeToP2P(resolve);
-                /*
-                self.upgradeToP2P();
-                self.dataChannel.onopen = function(d) {
-                    console.log('Data channel opened: ',d);
-                };
-                self.dataChannel.onerror = function(err) { console.log('DataChannel Error: ',err); };
-                iceHandlerUnsub = self.on('addIceCandidate', function(candidate) {
-                    console.log('candidate: ',candidate);
-                    self.pc.addIceCandidate(new RTCIceCandidate(candidate));
-                    iceHandlerUnsub();
-                });
-                localDescriptionUnsub = self.on('setLocalDescription', function(msg) {
-                    console.log('does it get here?',msg);
-                    var answer = new RTCSessionDescription(msg);
-                    self.pc.setLocalDescription(answer, function() {});
-                    console.log('ice candidate is : ',self.iceCandidate);
-                    if(self.iceCandidate) self.emit('iceCandidate',self.iceCandidate);
-                    self.p2pMode = true;
-                    localDescriptionUnsub();
-                    resolve(d);
-                });
-                */
-                resolve(d);
             } else reject(d);
             responseHandlerUnsub();
         };
@@ -295,35 +273,6 @@ SocketProxy.prototype.listenForGameRequest = function(cb) {
             self.emit('requestGame-response', { response: true, asker:d.asker});
             self.listenForUpgradeToP2P(cbFnc);
             requestHandlerSub();
-            /*
-            self.pc.ondatachannel = function(event) {
-                self.dataChannel = event.channel;
-                self.dataChannel.onopen = function(d) {
-                    console.log('Data channel opened: ',d);
-                    cbFnc();
-                };
-                self.dataChannel.onerror = function(err) { console.log('DataChannel Error: ',err); };
-            };
-            setLocalDescriptionSub = self.on('setLocalDescription', function(offer) {
-                console.log('how about here sld',offer);
-                offer = new RTCSessionDescription(offer);
-                console.log('right after SessionDescription');
-                self.pc.setRemoteDescription(offer);
-
-                self.pc.createAnswer(function (answer) {
-                    self.pc.setRemoteDescription(answer, function() {
-                        self.emit("setLocalDescription", JSON.stringify(self.pc.localDescription));
-                    }, function(err) { console.log('Set local description Error: ',err); });
-                }, function(err) { console.log('Create Answer Error: ',err); });
-
-                setLocalDescriptionSub();
-            });
-            iceHandlerSub = self.on('addIceCandidate', function(candidate) {
-                console.log('candidate add Ice',candidate);
-                self.pc.addIceCandidate(new RTCIceCandidate(candidate));
-                iceHandlerSub();
-            });
-            */
         }).catch(function(reason, cbFnc) {
             console.log('here?',d.asker,reason);
             self.emit('requestGame-response',{response: false, reason, asker:d.asker});
