@@ -14,6 +14,7 @@ function tryParseJSON (jsonString){
 function localDescCreated(desc) {
     let self = this;
     self.pc.setLocalDescription(desc, function () {
+        console.log(self.username,'set local description');
         self.emit('setLocalDescription',self.pc.localDescription);
     }, function(err) {
         console.log('localDescCreated error: ',err);
@@ -74,67 +75,63 @@ export default function SocketProxy(url, protocols = {}) {
         self.buffer.forEach(function(msg) {
             self.emit(msg.channel, msg.msg);
         });
+        self.on('iceCandidate', function(candidate) {
+            console.log(self.username,' add ice candidate');
+            self.pc.addIceCandidate(new RTCIceCandidate(candidate));
+        });
     };
 }
 //
 SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {
     let self = this;
+
     self.on('setLocalDescription', function(msg) {
-        let sd = new RTCSessionDescription(msg);
-        self.pc.setRemoteDescription(sd, function() {
+        console.log(self.username, ' setRemoteDescription');
+        self.pc.setRemoteDescription(new RTCSessionDescription(msg), function() {
             if(self.pc.remoteDescription.type == 'offer') {
-                self.pc.createAnswer(localDescCreated.bind(self),
-                    function(err){
-                        console.log('Error creating answer: ',err);
-                    }
-                );
+                console.log(self.username,' create answer');
+                self.pc.createAnswer(localDescCreated.bind(self), function(err){ console.log('Error creating answer: ',err); });
+
+                self.pc.onicecandidate = function (e) {
+                    if (!e || !e.candidate) return;
+                    console.log(self.username, ' ice candidate on');
+                    self.emit('iceCandidate', e.candidate);
+                };
             }
         });
     });
+
+    self.pc.ondatachannel = function (evt) {
+        console.log('open data channel');
+        self.dataChannel = evt.channel;
+    };
 };
 //
 SocketProxy.prototype.upgradeToP2P = function(resolve) {
     let self = this;
+    console.log(self.username,' create Data Channel');
     this.dataChannel = this.pc.createDataChannel('gameChannel');
     self.dataChannel.onopen = function(d) {
-        console.log('Data channel opened: ',d);
+        console.log(self.username,' Data channel opened: ',d);
     };
     self.dataChannel.onerror = function(err) { console.log('DataChannel Error: ',err); };
-    // send any ice candidates to the other peer
-    self.pc.onicecandidate = function (e) {
-        if (!e || !e.candidate) return;
-        console.log('onicecandidate: ',e);
-    };
     // let the 'negotiationneeded' event trigger offer generation
     self.pc.onnegotiationneeded = function () {
+        console.log(self.username, 'create offer');
         self.pc.createOffer(localDescCreated.bind(self), function(err) { console.log('Create Offer Error: ',err); });
-    }
-    /*
-    let self = this;
-    this.dataChannel = this.pc.createDataChannel('gameChannel');
-    this.pc.createOffer(function(offer) {
-        self.pc.setLocalDescription(offer, function() {
-            let o;
-            try {
-                o = offer.toJSON();
-            } catch(err) {
-                console.log('inside set local description to JSON giving a problem: ',err);
-            }
-            if(typeof o === 'string'){
-                try {
-                    o = JSON.parse(o);
-                } catch(err) {
-                    console.log('Error parsing o for sld : ',err);
-                }
-            }
-            self.emit('setLocalDescription',o);
-        }, function(err) {
-            console.log('setLocalDescription error: ',err);
+    };
+
+    self.on('setLocalDescription', function(msg) {
+        console.log(self.username, ' set remote description');
+        self.pc.setRemoteDescription(new RTCSessionDescription(msg), function() {
+            // send any ice candidates to the other peer
+            self.pc.onicecandidate = function (e) {
+                if (!e || !e.candidate) return;
+                console.log(self.username, ' ice candidate on');
+                self.emit('iceCandidate', e.candidate);
+            };
         });
-    }, function(err) {
-        console.log('createOffer error: ',err);
     });
-    */
 };
 //
 SocketProxy.prototype.on = function(channel, cb) {

@@ -99,7 +99,7 @@ test('socket.io integration test - request game', function(t) {
                 s2.disconnect();
                 t.end();
             }
-        },10000);
+        },15000);
     };
 
     Promise.all([
