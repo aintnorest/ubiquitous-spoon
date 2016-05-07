@@ -58,7 +58,7 @@ export default function SocketProxy(url, protocols = {}) {
     };
 }
 //
-SocketProxy.prototype.setupP2Pmessaging = function() {
+SocketProxy.prototype.setupP2Pmessaging = function(callBack) {
     let self = this;
     self.dataChannel.onmessage = function(msg) {
         let parsedMsg = tryParseJSON(msg.data);
@@ -76,6 +76,7 @@ SocketProxy.prototype.setupP2Pmessaging = function() {
     self.p2p.emit = function(channel, msg) {
         self.dataChannel.send(JSON.stringify({channel,msg}));
     };
+    if(typeof callBack === 'function') callBack();
 
 };
 //
@@ -102,7 +103,7 @@ SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {
         self.p2pMode = true;
         console.log(self.username,' Data channel opened: ');
         self.dataChannel = evt.channel;
-        self.setupP2Pmessaging();
+        self.setupP2Pmessaging(cb);
     };
 };
 //
@@ -251,7 +252,6 @@ SocketProxy.prototype.requestGame = function(un) {
             responseHandlerUnsub();
         };
         responseHandlerUnsub = self.on('requestGame-response', responseHandler);
-        console.log('Emit this request for game: ',un);
         self.emit('requestGame',un);
     });
 };
@@ -268,7 +268,6 @@ SocketProxy.prototype.listenForGameRequest = function(cb) {
     let self = this;
     let requestHandlerSub;
     let requestHandler = function(d) {
-        console.log('handler for requestGame',d);
         cb(d).then(function(cbFnc) {
             self.emit('requestGame-response', { response: true, asker:d.asker});
             self.listenForUpgradeToP2P(cbFnc);

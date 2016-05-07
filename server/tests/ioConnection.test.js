@@ -108,26 +108,17 @@ test('socket.io integration test - request game', function(t) {
     ]).then(function() {
         s.listenForGameRequest(function(request) {
             return new Promise(function(resolve, reject) {
-                resolve(function(){console.log('done with stuff')});
+                resolve(function(){
+                    console.log('p2p established, setup listeners');
+                    s.p2p.on("chat",function(msg) {
+                        t.pass('p2p message recieved');
+                        cleanup(true);
+                    });
+                });
             });
         });
         s2.requestGame('Christopher').then(function(d) {
-            setTimeout(function() {
-                //set this so that s is ready with p2p initialized;
-                try{
-                    s.p2p.on("chat",function(msg) {
-                        t.pass('p2p message recieved');
-                    });
-                } catch(err) {
-                    console.log('had some trouble with the p2p');
-                }
-                try {
-                    s2.p2p.emit("chat","hi!");
-                } catch(err) {
-                    console.log('had some trouble with the p2p emitter');
-                }
-                cleanup(true);
-            },3000);
+            s2.p2p.emit("chat","hi!");
             t.pass('Game Accepted');
         }).catch(function(d) {
             t.fail('Game Denied');
