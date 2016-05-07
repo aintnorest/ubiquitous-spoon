@@ -3,13 +3,21 @@ import { push } from 'react-router-redux'
 import * as types from '../constants/action-types';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
 
-const serverURL = 'http://localhost:4000';
+const serverURL = 'ws://localhost:4000';
 let socketProxy;
+
+// Thunks
+
+export function connectToServer() {
+    return (dispatch) => {
+        socketProxy = new SocketProxy(serverURL);
+        socketProxy.ws.onopen = () => dispatch(setServerConnected(true));
+        socketProxy.ws.onclose = () => dispatch(setServerConnected(false));
+    };
+}
 
 export function signIn() {
     return (dispatch, getState) => {
-        const socketConfig = {forceNew: false, multiplex: false};
-        socketProxy = new SocketProxy(serverURL, socketConfig);
         const userName = getState().appReducer.userName;
         return socketProxy.signIn(userName).then(() => {
             dispatch(setErrorMessage(null));
@@ -33,9 +41,18 @@ export function signOut() {
     };
 }
 
+// Normal actions
+
 export function redirect(route) {
     return push(route);
 }
+
+export function setServerConnected(connected) {
+    return {
+        type: types.SET_SERVER_CONNECTED,
+        payload: connected
+    };
+};
 
 export function setUserName(userName) {
     return {
