@@ -273,7 +273,6 @@ SocketProxy.prototype.listenForGameRequest = function(cb) {
             self.listenForUpgradeToP2P(cbFnc);
             requestHandlerSub();
         }).catch(function(reason, cbFnc) {
-            console.log('here?',d.asker,reason);
             self.emit('requestGame-response',{response: false, reason, asker:d.asker});
             if(typeof cbFnc == 'function') cbFnc();
         });

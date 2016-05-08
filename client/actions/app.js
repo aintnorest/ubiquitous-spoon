@@ -6,10 +6,6 @@ import SocketProxy from '../../server/tests/utils/clientSocketProxy';
 const serverURL = 'ws://localhost:4000';
 let socketProxy = new SocketProxy(serverURL);
 
-socketProxy.ws.onopen = function() {
-    console.log('socket open!');
-}
-
 export function signIn() {
     return (dispatch, getState) => {
         const userName = getState().appReducer.userName;
