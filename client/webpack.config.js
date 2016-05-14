@@ -1,11 +1,17 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
     resolve: {
-        extensions: ['', '.jsx', '.js']
+        extensions: ['', '.jsx', '.js'],
     },
     entry: [
         './index.js'
+    ],
+    plugins : [
+        new webpack.DefinePlugin({
+            'NODE_ENV' : JSON.stringify((process.env.NODE_ENV || 'development').trim())
+      }),
     ],
     output: {
         path: path.join(__dirname, '../server/static'),
