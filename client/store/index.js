@@ -1,3 +1,4 @@
+import React from 'react';
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import { browserHistory } from 'react-router';
@@ -12,7 +13,7 @@ export default function(env) {
     if(env === 'development') {
         //
         const DevTools = createDevTools(
-            <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
+            <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q" defaultIsVisible={false}>
                 <LogMonitor theme="tomorrow" preserveScrollTop={false} />
             </DockMonitor>
         );

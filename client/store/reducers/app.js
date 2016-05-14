@@ -1,14 +1,23 @@
 import createReducer from '../../utils/createReducer';
-import {SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE} from '../../constants/action-types';
+import {SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_GAME, SET_LOADING} from '../../constants/action-types';
 
 const initialState = {
     userName: null,
     signedIn: false,
-    errorMessage: null
+    errorMessage: null,
+    game: null,
+    loading: {}
 };
 
 export default createReducer(initialState, {
-    [SET_USER_NAME]: (state, payload) => ({ ...state, userName: payload }),
-    [SET_SIGNED_IN]: (state, payload) => ({ ...state, signedIn: payload }),
-    [SET_ERROR_MESSAGE]: (state, payload) => ({ ...state, errorMessage: payload })
+    [SET_USER_NAME]: (state, userName) => ({ ...state, userName }),
+    [SET_SIGNED_IN]: (state, signedIn) => ({ ...state, signedIn }),
+    [SET_ERROR_MESSAGE]: (state, errorMessage) => ({ ...state, errorMessage }),
+    [SET_GAME]: (state, game) => ({...state, game}),
+    [SET_LOADING]: (state, payload) => {
+        let s = {...state};
+        if(payload.progress >= 100) delete s.loading[payload.type];
+        else s.loading[payload.type] = payload.progress;
+        return s;
+    }
 });

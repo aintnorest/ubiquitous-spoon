@@ -10,7 +10,7 @@ module.exports = {
     ],
     plugins : [
         new webpack.DefinePlugin({
-            'NODE_ENV' : JSON.stringify((process.env.NODE_ENV || 'development').trim())
+            '__NODE_ENV__' : JSON.stringify((process.env.NODE_ENV || 'development').trim())
       }),
     ],
     output: {
@@ -42,7 +42,17 @@ module.exports = {
             {
                 test: /\.json$/,
                 loader: 'json-loader'
+            },
+            {
+                test:   /\.css$/,
+                loader: "style-loader!css-loader!postcss-loader?pack=compile"
             }
         ]
+    },
+    postcss: function () {
+        return {
+            compile:[ require('postcss-apply')(), require("postcss-cssnext")() ]
+        };
     }
+
 };

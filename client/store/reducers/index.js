@@ -1,1 +1,1 @@
-export appReducer from './app';
+export app from './app';

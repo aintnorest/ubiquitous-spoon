@@ -14,7 +14,7 @@
     "redux-thunk": "^2.1.0"
   },
   "scripts": {
-    "build": "webpack --watch",
+    "build": "NODE_ENV=development webpack --watch",
     "buildProduction": "NODE_ENV=production webpack --watch",
     "test": "browserify -t babelify actions/*.test.js | tape-run | tap-notify | tap-spec"
   },
@@ -27,11 +27,16 @@
     "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "css-loader": "^0.23.1",
     "file-loader": "^0.8.5",
+    "postcss-apply": "^0.2.0",
+    "postcss-cssnext": "^2.5.2",
+    "postcss-loader": "^0.9.1",
     "redux-devtools": "^3.3.1",
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.0.11",
     "sinon": "^1.17.4",
+    "style-loader": "^0.13.1",
     "tap-notify": "^1.0.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.5.1",
