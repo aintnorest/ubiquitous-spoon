@@ -16,6 +16,10 @@ module.exports = {
         postLoaders: [
             {
                 loader: "transform?brfs"
+            },
+            {
+                include: path.resolve(__dirname, 'node_modules/pixi.js'),
+                loader: 'transform?brfs'
             }
         ],
         loaders: [
