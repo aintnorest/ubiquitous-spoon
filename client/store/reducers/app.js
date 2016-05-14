@@ -2,7 +2,7 @@ import createReducer from '../../utils/createReducer';
 import {SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_GAME, SET_LOADING} from '../../constants/action-types';
 
 const initialState = {
-    userName: null,
+    userName: '',
     signedIn: false,
     errorMessage: null,
     game: null,

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router'
 import { connect } from 'react-redux';
-
+import { bindActionCreators } from 'redux';
+import { signOut } from '../actions/app';
 
 function appHeader(props) {
     return (
@@ -16,7 +17,11 @@ function appHeader(props) {
                         <Link to='gameSpace' className="nav-sml">Game Space</Link>
                     </li>
                     <li className="nav-li-itm">
-                        <Link to='/' className="nav-sml">{props.signedIn ? 'Sign Out' : 'Sign In'}</Link>
+                        {props.signedIn ? (
+                            <a onClick={props.signOut}>Sign Out</a>
+                        ) : (
+                            <Link to='/' className="nav-sml">Sign In</Link>
+                        )}
                     </li>
                 </ul>
             ):null}
@@ -24,4 +29,7 @@ function appHeader(props) {
     );
 }
 
-export default connect((state) => state.app)(appHeader);
+export default connect(
+    (state) => state.app,
+    (dispatch) => bindActionCreators({signOut}, dispatch)
+)(appHeader);

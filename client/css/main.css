@@ -18,6 +18,7 @@
     --primary-clr: #3F51B5;
     --primary-clr-l: #C5CAE9;
     --primary-clr-d: #303F9F;
+    --secondary-clr: #009688;
     /* accent for weblinks or primary action btns or as a txt accent color over a primary background*/
     --accent-clr: #FF4081;
     --accent-clr-l: #FF80AB;
@@ -108,4 +109,68 @@ nav ul li a:active {
 }
 .btnless-list {
     list-style-type: none;
+}
+
+
+.input-field {
+    position: relative;
+    margin-top: 1rem;
+    padding: 0 0.7rem;
+    & input {
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid #9e9e9e;
+        border-radius: 0;
+        outline: none;
+        height: 3rem;
+        width: 100%;
+        font-size: 1rem;
+        margin: 0 0 15px 0;
+        padding: 0;
+        box-shadow: none;
+        box-sizing: content-box;
+        transition: all 0.3s;
+    }
+    & input:focus {
+        border-bottom: 1px solid var(--secondary-clr);
+        box-shadow: 0 1px 0 0 var(--secondary-clr);
+    }
+    & label {
+        color: #9e9e9e;
+        position: absolute;
+        top: 0.8rem;
+        left: 0.75rem;
+        font-size: 1rem;
+        cursor: text;
+        transition: .2s ease-out;
+    }
+    & input:focus:not([readonly])+label {
+        color: var(--secondary-clr);
+    }
+    & label:focus {
+        color: var(--secondary-clr);
+    }
+    & label.active {
+        font-size: 0.8rem;
+        transform: translateY(-140%);
+    }
+    & .error {
+        font-size: 0.65rem;
+        color: red;
+    }
+}
+
+/*NEEDS TO BE MOVED INTO COMPONENTS */
+.signin-input-wrap {
+    width: 35%;
+}
+.signin-btn {
+    height: 36px;
+    border-radius: 2px;
+    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+    top: 0px;
+    background-color: var(--accent-clr);
+    color: #FFF;
+    padding:0 0.7rem;
+    margin:0.7rem;
 }

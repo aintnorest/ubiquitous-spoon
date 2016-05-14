@@ -1,19 +1,36 @@
 import React from 'react';
 import warmahordes from '../../images/warmahordes.png'
-import { setGame } from '../../actions/app';
+import { setGame, setUserName, signIn } from '../../actions/app';
 import { connect } from 'react-redux';
+import InputField from '../inputField';
 import { bindActionCreators } from 'redux';
 
 function Home(props) {
     console.log('home Props: ',props);
     return (
         <div className='body'>
-            <h1>Select Game</h1>
-            <ul className="btnless-list">
-                <li onClick={() => props.setGame('warmachine')}>
-                    <img className="btn-img" src={warmahordes} alt='warmahordes'/>
-                </li>
-            </ul>
+            {
+                (props.game !== null) ? (
+                    (props.signedIn) ? null : (
+                    <div>
+                        <h1>Sign In</h1>
+                        <div className='signin-input-wrap'>
+                            <InputField type='text' placeholder='' error={props.errorMessage} value={props.userName} change={props.setUserName} id='username' label='Username'/>
+                        </div>
+                        <button className="signin-btn" onClick={props.signIn}>Sign In</button>
+                    </div>
+                    )
+                ) : (
+                    <div>
+                        <h1>Select Game</h1>
+                        <ul className="btnless-list">
+                            <li onClick={() => props.setGame('warmachine')}>
+                                <img className="btn-img" src={warmahordes} alt='warmahordes'/>
+                            </li>
+                        </ul>
+                    </div>
+                )
+            }
             <h2>About</h2>
             <section>
                 The goal is make a more modern and web based alternative to http://www.vassalengine.org/ . As of right now the two primary contributers use vassal for warmachine / hordes and feature development will probably be geared towards that game.
@@ -34,5 +51,5 @@ function Home(props) {
 
 export default connect(
     (state) => state.app,
-    (dispatch) => bindActionCreators({setGame}, dispatch)
+    (dispatch) => bindActionCreators({setGame, setUserName, signIn}, dispatch)
 )(Home);
