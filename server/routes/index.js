@@ -1,15 +1,14 @@
 import Path from 'path';
 import Inert from 'inert';
-import ioConnection from '../handlers/ioConnection';
-import Chat from '../utils/chat';
+import socketConnections from '../handlers/socketConnections';
+import webSocketServer from '../utils/WebSocketServer';
 import fs from 'fs';
 //
-export default function(server, io) {
-    const chat = new Chat({ 'mainRoom': {userList:[], roles:{}, options:{ permanent:true } } });
-    //
+export default function(server) {
+
     server.register(Inert, () => {});
     //
-    io.on('connection', ioConnection(io, chat));
+    webSocketServer(server, socketConnections);
     //
     server.route([
         //Serve Files out of the static folder
