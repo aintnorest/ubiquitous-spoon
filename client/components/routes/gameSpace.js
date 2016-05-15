@@ -10,6 +10,7 @@ function createGameWorld(size) {
     let gameObj = {};
     gameObj.renderer = new PIXI.WebGLRenderer(x,y);
     gameObj.stage = new PIXI.ParticleContainer;
+    gameObj.renderer.backgroundColor = 0xF5F5F6;
     gameObj.stage.width = x;
     gameObj.stage.height = y;
     gameObj.renderer.autoResize = true;

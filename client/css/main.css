@@ -94,21 +94,78 @@ nav ul li a:active {
 }
 /* BUTTON */
 .btn-img {
-    @apply --z-depth-1;
     padding: 0;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     border: none;
     outline: 0;
 }
-.btn-img:hover {
-    @apply --z-depth-2;
+
+.about-faq-wrap {
+    clear: both;
 }
-.btn-img:active {
-    @apply --z-depth-0;
-}
+
 .btnless-list {
     list-style-type: none;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    & li {
+        @apply --z-depth-1;
+        display: inline-block;
+        margin-right: 25px;
+        margin-bottom: 25px;
+        position: relative;
+        max-height: 400px;
+        max-width: 375px;
+        background-color: #fff;
+        transition: box-shadow .25s;
+        border-radius: 2px;
+    }
+    & .card-image {
+        position: relative;
+        max-height: 60%;
+        overflow: hidden;
+    }
+    & .card-image img {
+        display: block;
+        border-radius: 2px 2px 0 0;
+        position: relative;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+    & .card-title {
+        color: #fff;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: 500;
+    }
+    & .card-content {
+        max-height: 40%;
+        overflow: hidden;
+        padding: 20px;
+        border-radius: 0 0 2px 2px;
+    }
+    & .card-action {
+        background-color: inherit;
+        border-top: 1px solid rgba(160,160,160,0.2);
+        padding: 20px;
+        & a {
+            color: var(--accent-clr-d);
+            text-decoration: none;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        & a:hover {
+            color: var(--accent-clr-l);
+        }
+    }
 }
 
 
@@ -210,6 +267,7 @@ nav ul li a:active {
     width: 35%;
 }
 .signin-btn {
+    @apply --z-depth-1;
     height: 36px;
     border-radius: 2px;
     transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
@@ -218,4 +276,12 @@ nav ul li a:active {
     color: #FFF;
     padding:0 0.7rem;
     margin:0.7rem;
+}
+
+.signin-btn:hover {
+    @apply --z-depth-2;
+}
+
+.signin-btn:active {
+    @apply --z-depth-0;
 }

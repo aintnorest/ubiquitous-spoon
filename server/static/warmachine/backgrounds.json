@@ -1,0 +1,36 @@
+{"frames": {
+
+"desertTile.jpg":
+{
+	"frame": {"x":0,"y":0,"w":325,"h":325},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":325,"h":325},
+	"sourceSize": {"w":325,"h":325}
+},
+"grassTile.jpg":
+{
+	"frame": {"x":325,"y":0,"w":325,"h":325},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":325,"h":325},
+	"sourceSize": {"w":325,"h":325}
+},
+"snowTile.jpg":
+{
+	"frame": {"x":650,"y":0,"w":325,"h":325},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":325,"h":325},
+	"sourceSize": {"w":325,"h":325}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "backgrounds.png",
+	"format": "RGBA8888",
+	"size": {"w":975,"h":325},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:1a824e0188c414dd003ec460bcee487e:76f51fa9dbe273623c4bc445861fab39:f1d160bc8f29cda58a3095e4596a0f13$"
+}
+}
