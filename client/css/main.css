@@ -161,6 +161,51 @@ nav ul li a:active {
 }
 
 /*NEEDS TO BE MOVED INTO COMPONENTS */
+[data-loader='circle'] {
+    width: 40px;
+    height: 40px;
+    animation: circle infinite .75s linear;
+    border: 3px solid rgba(0, 0, 0, 0.8);
+    border-top-color: transparent;
+    border-radius: 100%;
+}
+@keyframes circle {
+    0% {
+        -webkit-transform: rotate(0);
+            -ms-transform: rotate(0);
+             -o-transform: rotate(0);
+                transform: rotate(0);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+             -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+    }
+}
+.signin-dialog-bg {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.541176);
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+.signin-dialog-box {
+    @apply --z-depth-3;
+    border-radius: 2px;
+    background-color: #FFF;
+    padding: 1rem;
+}
+.signin-dialog-txt {
+    color: #000;
+}
 .signin-input-wrap {
     width: 35%;
 }

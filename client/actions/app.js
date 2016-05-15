@@ -25,6 +25,7 @@ export function signIn() {
 export function setGame(game) {
     return (dispatch, getState) => {
         let loadProgressHandler = function(loader, resource) {
+            console.log('loading handler');
             dispatch({type: SET_LOADING, payload:{
                 type:resource.url, progress:loader.progress
             }});
@@ -62,6 +63,7 @@ export function signOut() {
     return (dispatch) => {
         if (socketProxy) {
             socketProxy.disconnect();
+            socketProxy = new SocketProxy(serverURL);
         }
         dispatch(setUserName(''));
         dispatch(setSignedIn(false));

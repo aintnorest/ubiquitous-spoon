@@ -6,7 +6,7 @@ import InputField from '../inputField';
 import { bindActionCreators } from 'redux';
 
 function Home(props) {
-    console.log('home Props: ',props);
+    let ld = Object.keys(props.loading);
     return (
         <div className='body'>
             {
@@ -44,7 +44,20 @@ function Home(props) {
                 <li>Is it open source and can I help?</li>
                 Yes please! <a href="https://github.com/aintnorest/ubiquitous-spoon">Ubiquitous Spoon</a>
             </ul>
-
+            {(ld.length > 0) ?
+                (
+                    <div className="signin-dialog-bg">
+                        <div className="signin-dialog-box">
+                            <div data-loader="circle" />
+                            {
+                                ld.map(function(k) {
+                                    return (<div className="signin-dialog-txt">{k+" "+props.loading[k]+"%"}</div>);
+                                })
+                            }
+                        </div>
+                    </div>
+                ) : null
+            }
         </div>
     );
 }

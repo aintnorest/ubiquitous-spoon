@@ -17,7 +17,7 @@ function appHeader(props) {
                         <Link to='gameSpace' className="nav-sml">Game Space</Link>
                     </li>
                     <li className="nav-li-itm">
-                        {props.signedIn ? (
+                        {(props.signedIn) ? (
                             <a onClick={props.signOut}>Sign Out</a>
                         ) : (
                             <Link to='/' className="nav-sml">Sign In</Link>
