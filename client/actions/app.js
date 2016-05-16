@@ -1,22 +1,59 @@
-import { push } from 'react-router-redux'
-
-import * as types from '../constants/action-types';
+import { push } from 'react-router-redux';
+import {SET_GAME, SET_LOADING, SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE} from '../constants/action-types';
+import loadScript from '../utils/loadScript';
+import PIXI from 'pixi.js';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
-
+//
 const serverURL = 'ws://localhost:4000';
 let socketProxy = new SocketProxy(serverURL);
-
+//
 export function signIn() {
     return (dispatch, getState) => {
-        const userName = getState().appReducer.userName;
-        return socketProxy.signIn(userName).then(() => {
+        const s = getState().app;
+        return socketProxy.signIn(s.userName,s.game).then(() => {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
-            dispatch(redirect('/foo'));
+            //dispatch(redirect('/foo'));
         }).catch((e) => {
             console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));
             dispatch(setSignedIn(false));
+        });
+    };
+}
+//
+export function setGame(game) {
+    return (dispatch, getState) => {
+        let loadProgressHandler = function(loader, resource) {
+            dispatch({type: SET_LOADING, payload:{
+                type:resource.url, progress:loader.progress
+            }});
+        };
+        dispatch({type: SET_LOADING, payload:{
+            type:'Game Data', progress:0
+        }});
+        loadScript('static/'+game+'/index.js').then(function(d) {
+            Object.keys(gameFunctions).forEach(function(key) {
+                gameFunctions[key].sprites.forEach(function(url) {
+                    dispatch({type: SET_LOADING, payload:{
+                        type:url, progress:0
+                    }});
+                    PIXI.loader.add(url).on("progress", loadProgressHandler);
+                });
+            });
+            PIXI.loader.load(function() {
+                dispatch({
+                   type: SET_GAME,
+                   payload: game
+                });
+            });
+            dispatch({type: SET_LOADING, payload:{
+                type:'Game Data', progress:100
+            }});
+        }).catch(function(err) {
+            dispatch({type: SET_LOADING, payload:{
+                type:'Game Data', progress:-1
+            }});
         });
     };
 }
@@ -25,34 +62,34 @@ export function signOut() {
     return (dispatch) => {
         if (socketProxy) {
             socketProxy.disconnect();
+            socketProxy = new SocketProxy(serverURL);
         }
-        dispatch(setUserName(null));
+        dispatch(setUserName(''));
         dispatch(setSignedIn(false));
-        dispatch(redirect('/'));
+        dispatch(push('/'));
     };
 }
 
-export function redirect(route) {
-    return push(route);
-}
-
-export function setUserName(userName) {
+export function setUserName(e) {
+    let userName;
+    if(e.target) userName = e.target.value;
+    else userName = e;
     return {
-       type: types.SET_USER_NAME,
+       type: SET_USER_NAME,
        payload: userName
     };
 }
 
 export function setSignedIn(signedIn) {
     return {
-        type: types.SET_SIGNED_IN,
+        type: SET_SIGNED_IN,
         payload: signedIn
     };
 }
 
 export function setErrorMessage(message) {
     return {
-        type: types.SET_ERROR_MESSAGE,
+        type: SET_ERROR_MESSAGE,
         payload: message
     }
 }

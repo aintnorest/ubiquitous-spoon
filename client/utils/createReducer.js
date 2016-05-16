@@ -7,5 +7,5 @@ export default function createReducer(initialState, reducerMap) {
             return;
         }
         return reducer ? reducer(state, action.payload) : state;
-  };
+    };
 };
