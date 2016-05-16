@@ -1,3 +1,4 @@
+
 import "webrtc-adapter";
 //
 function tryParseJSON (jsonString){
@@ -36,6 +37,8 @@ export default function SocketProxy(url, protocols = {}) {
     this.username = '';
     this.p2pMessageListeners = {};
     this.messageListeners = {};
+    this.WSopenListener = [];
+    this.WScloseListener = [];
     this.ws.onmessage = function (msg) {
         if(msg.origin != url) return;
         let parsedMsg = tryParseJSON(msg.data);
@@ -48,12 +51,20 @@ export default function SocketProxy(url, protocols = {}) {
     this.buffer = [];
     this.ws.onopen = function() {
         self.ready = true;
+        self.WSopenListener.forEach((cb) => {
+            cb();
+        });
         self.buffer.forEach(function(msg) {
             self.emit(msg.channel, msg.msg);
         });
         self.on('addIceCandidate', function(candidate) {
             console.log(self.username,' add ice candidate');
             self.pc.addIceCandidate(new RTCIceCandidate(candidate));
+        });
+    };
+    this.ws.onclose = function() {
+        self.WScloseListener.forEach((cb) => {
+            cb();
         });
     };
 }
@@ -78,6 +89,28 @@ SocketProxy.prototype.setupP2Pmessaging = function(callBack) {
     };
     if(typeof callBack === 'function') callBack();
 
+};
+//
+SocketProxy.prototype.onWSopen = function(cb) {
+    let self = this;
+    this.WSopenListener.push(cb);
+    return function() {
+        self.WSopenListener = self.WSopenListener.filter(function(c){
+            if(c !== cb) return true;
+            else return false;
+        });
+    }
+};
+//
+SocketProxy.prototype.onWSclose = function(cb) {
+    let self = this;
+    this.WScloseListener.push(cb);
+    return function() {
+        self.WScloseListener = self.WScloseListener.filter(function(c){
+            if(c !== cb) return true;
+            else return false;
+        });
+    }
 };
 //
 SocketProxy.prototype.listenForUpgradeToP2P = function(cb) {

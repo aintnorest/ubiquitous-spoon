@@ -60,6 +60,10 @@ export default React.createClass({
         }
         //start the game
         this.animate();
+        document.addEventListener("keyPress", this.keyboardHandler, false);
+    },
+    componentWillUnmount() {
+        document.removeEventListener("keyPress", this.keyboardHandler, false);
     },
 
     animate() {
@@ -75,6 +79,10 @@ export default React.createClass({
         // render the stage container
         this.game.renderer.render(this.game.stage);
         //requestAnimationFrame(self.animate);
+    },
+
+    keyboardHandler(e) {
+        console.log(e);
     },
 
     render() {

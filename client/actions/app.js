@@ -25,7 +25,6 @@ export function signIn() {
 export function setGame(game) {
     return (dispatch, getState) => {
         let loadProgressHandler = function(loader, resource) {
-            console.log('loading handler');
             dispatch({type: SET_LOADING, payload:{
                 type:resource.url, progress:loader.progress
             }});
