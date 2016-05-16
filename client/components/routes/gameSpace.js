@@ -62,9 +62,13 @@ export default React.createClass({
         //start the game
         this.animate();
         document.addEventListener("keypress", this.keyboardHandler, false);
+        document.addEventListener("keydown", this.keydownHandler, false);
+        document.addEventListener("keyup",this.keyupHandler,false);
     },
     componentWillUnmount() {
         document.removeEventListener("keypress", this.keyboardHandler, false);
+        document.removeEventListener("keydown", this.keydownHandler, false);
+        document.removeEventListener("keyup",this.keyupHandler,false);
     },
 
     animate() {
@@ -110,18 +114,47 @@ export default React.createClass({
             this.game.stage.scale.y = this.game.stage.scale.y - 0.1;
             this.game.renderer.render(this.game.stage);
         }
-        console.log(this.game.stage.position);
-        console.log(e);
+        console.log('charCode',e);
+    },
+    keydownHandler(e) {
+        if(e.charCode == 0 && e.shiftKey) {
+            document.addEventListener("mousemove", this.moveStage, false);
+        }
+    },
+    keyupHandler(e) {
+        if(e.code == "ShiftLeft") {
+            try {
+                this.prevMsPst = [];
+                document.removeEventListener("mousemove", this.moveStage, false);
+            } catch(d) {
+                console.log('didnt exist');
+            }
+        }
+    },
+
+    prevMsPst: [],
+    moveStage(e) {
+        if(this.prevMsPst.length == 0){
+            this.prevMsPst = [e.clientX,e.clientY];
+            return;
+        }
+        let dX = this.prevMsPst[0] - e.clientX;
+        let dY = this.prevMsPst[1] - e.clientY;
+        this.prevMsPst = [e.clientX,e.clientY];
+        this.game.stage.position.y = this.game.stage.position.y + (dY * this.game.stage.scale.x);
+        this.game.stage.position.x = this.game.stage.position.x + (dX * this.game.stage.scale.x);
+        this.game.renderer.render(this.game.stage);
     },
 
     wheel(e) {
-        this.game.stage.scale.x = this.game.stage.scale.x + (e.deltaY * 0.01);
-        this.game.stage.scale.y = this.game.stage.scale.y + (e.deltaY * 0.01);
+        let scale = this.game.stage.scale.x + (e.deltaY * 0.01);
+        if(scale < 0.3) scale = 0.3;
+        else if(scale > 3) scale = 3;
+        this.game.stage.scale.x = scale;
+        this.game.stage.scale.y = scale;
+        /*SHOULD BE ABLE TO REMOVE ONCE WE HAVE A LOOP */
         this.game.renderer.render(this.game.stage);
-        console.log('deltaMode: ',e.deltaMode);
-        console.log('deltaX: ',e.deltaX);
-        console.log('deltaY: ',e.deltaY);
-        console.log('deltaZ: ',e.deltaZ);
+        e.preventDefault();
     },
 
     render() {
