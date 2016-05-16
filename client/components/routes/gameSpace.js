@@ -19,20 +19,16 @@ function createGameWorld() {
     let gameObj = {};
     gameObj.renderer = new PIXI.WebGLRenderer(x,y);
     gameObj.stage = new PIXI.Container;
-    console.log('game obj pivot',gameObj.stage.pivot);
     gameObj.renderer.backgroundColor = 0xF5F5F6;
     gameObj.stage.width = 2439;
     gameObj.stage.height = 2439;
     let scale = determineScale(x,y);
-    console.log('SCALE :',scale);
     gameObj.stage.scale.x = scale;
     gameObj.stage.scale.y = scale;
     gameObj.renderer.autoResize = true;
     let resize = debounce(function(){
-        console.log('how often am i called')
         gameObj.renderer.resize(window.innerWidth, window.innerHeight - 64);
         let scale = determineScale(x,y);
-        console.log('SCALE :',scale);
         gameObj.stage.scale.x = scale;
         gameObj.stage.scale.y = scale;
         self.game.renderer.render(self.game.stage);
@@ -114,7 +110,6 @@ export default React.createClass({
             this.game.stage.scale.y = this.game.stage.scale.y - 0.1;
             this.game.renderer.render(this.game.stage);
         }
-        console.log('charCode',e);
     },
     keydownHandler(e) {
         if(e.charCode == 0 && e.shiftKey) {
