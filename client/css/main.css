@@ -277,6 +277,9 @@ nav ul li a:active {
     padding:0 0.7rem;
     margin:0.7rem;
 }
+.signin-btn:disabled {
+    background-color: grey;
+}
 
 .signin-btn:hover {
     @apply --z-depth-2;

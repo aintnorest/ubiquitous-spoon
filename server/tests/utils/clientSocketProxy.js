@@ -51,7 +51,9 @@ export default function SocketProxy(url, protocols = {}) {
     this.buffer = [];
     this.ws.onopen = function() {
         self.ready = true;
+        console.log('open ws',self.WSopenListener);
         self.WSopenListener.forEach((cb) => {
+            console.log('firing web socket cb');
             cb();
         });
         self.buffer.forEach(function(msg) {
@@ -93,6 +95,7 @@ SocketProxy.prototype.setupP2Pmessaging = function(callBack) {
 //
 SocketProxy.prototype.onWSopen = function(cb) {
     let self = this;
+    console.log('adding to ws open listener');
     this.WSopenListener.push(cb);
     return function() {
         self.WSopenListener = self.WSopenListener.filter(function(c){

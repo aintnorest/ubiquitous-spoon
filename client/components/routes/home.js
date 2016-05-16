@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 
 function Home(props) {
     let ld = Object.keys(props.loading);
+    console.log(props);
     return (
         <div className='body'>
             {
@@ -17,7 +18,7 @@ function Home(props) {
                         <div className='signin-input-wrap'>
                             <InputField type='text' placeholder='' error={props.errorMessage} value={props.userName} change={props.setUserName} id='username' label='Username'/>
                         </div>
-                        <button className="signin-btn" onClick={props.signIn}>Sign In</button>
+                        <button disabled={!props.serverConnected} className="signin-btn" onClick={props.signIn}>Sign In</button>
                     </div>
                     )
                 ) : (
