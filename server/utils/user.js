@@ -57,9 +57,9 @@ export default function User(ws, cleanup) {
     this.inGame = false;
 };
 
-User.prototype.signIn = function(username, r) {
+User.prototype.signIn = function(username, r, userList) {
     if(r.response) this.username = username;
-    this.wsp.emit('signIn',r);
+    this.wsp.emit('signIn',{...r, userList});
 };
 
 User.prototype.joinRoom = function(roomName, roomUpdate, chat) {

@@ -207,6 +207,7 @@ SocketProxy.prototype.signIn = function(requestedUsername) {
     return new Promise(function(resolve, reject) {
         let signInHandler = function(d) {
             if(d.response) {
+                console.log('signin', d);
                 resolve(d);
                 self.username = requestedUsername;
             } else reject(d);
