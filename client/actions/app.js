@@ -1,16 +1,31 @@
 import { push } from 'react-router-redux';
-import {SET_GAME, SET_LOADING, SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE} from '../constants/action-types';
+import {SET_GAME, SET_LOADING, SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_SERVER_CONNECTED, SET_SOCKETPROXY} from '../constants/action-types';
 import loadScript from '../utils/loadScript';
 import PIXI from 'pixi.js';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
 //
 const serverURL = 'ws://localhost:4000';
-let socketProxy = new SocketProxy(serverURL);
+//
+export function connectToServer() {
+    return (dispatch) => {
+        let socketProxy = new SocketProxy(serverURL);
+        dispatch({type:SET_SOCKETPROXY, payload:socketProxy});
+        socketProxy.onWSopen = () => dispatch(setServerConnected(true));
+        socketProxy.onWSclose = () => dispatch(setServerConnected(false));
+    };
+}
+//
+export function setServerConnected(connected) {
+    return {
+        type: SET_SERVER_CONNECTED,
+        payload: connected
+    };
+};
 //
 export function signIn() {
     return (dispatch, getState) => {
         const s = getState().app;
-        return socketProxy.signIn(s.userName,s.game).then(() => {
+        return s.socketProxy.signIn(s.userName,s.game).then(() => {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
             //dispatch(redirect('/foo'));
@@ -59,14 +74,15 @@ export function setGame(game) {
 }
 
 export function signOut() {
-    return (dispatch) => {
-        if (socketProxy) {
-            socketProxy.disconnect();
-            socketProxy = new SocketProxy(serverURL);
+    return (dispatch, getState) => {
+        const s = getState().app;
+        if (s.socketProxy) {
+            s.socketProxy.disconnect();
         }
         dispatch(setUserName(''));
         dispatch(setSignedIn(false));
         dispatch(push('/'));
+        dispatch(connectToServer());
     };
 }
 

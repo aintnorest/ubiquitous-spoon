@@ -1,12 +1,14 @@
 import createReducer from '../../utils/createReducer';
-import {SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_GAME, SET_LOADING} from '../../constants/action-types';
+import {SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_GAME, SET_LOADING, SET_SERVER_CONNECTED, SET_SOCKETPROXY} from '../../constants/action-types';
 
 const initialState = {
     userName: '',
     signedIn: false,
     errorMessage: null,
     game: null,
-    loading: {}
+    loading: {},
+    socketProxy: undefined,
+    serverConnected: false
 };
 
 export default createReducer(initialState, {
@@ -20,5 +22,7 @@ export default createReducer(initialState, {
         if(payload.progress >= 100) delete s.loading[payload.type];
         else s.loading[payload.type] = payload.progress;
         return s;
-    }
+    },
+    [SET_SERVER_CONNECTED]: (state, payload) => ({ ...state, serverConnected: payload }),
+    [SET_SOCKETPROXY]: (state, socketProxy) => ({...state, socketProxy})
 });

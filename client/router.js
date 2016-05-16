@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { connectToServer } from './actions/app';
 import * as R from './components/routes';
 //ROUTES
 export default function({store, DevTools}) {
@@ -13,6 +14,7 @@ export default function({store, DevTools}) {
             });
         }
     }
+    store.dispatch(connectToServer());
     //
     return(
         <Provider store={store}>
