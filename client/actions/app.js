@@ -1,8 +1,17 @@
 import { push } from 'react-router-redux';
-import {SET_GAME, SET_LOADING, SET_USER_NAME, SET_SIGNED_IN, SET_ERROR_MESSAGE, SET_SERVER_CONNECTED, SET_SOCKETPROXY} from '../constants/action-types';
 import loadScript from '../utils/loadScript';
 import PIXI from 'pixi.js';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
+import {
+    SET_GAME,
+    SET_LOADING,
+    SET_USER_NAME,
+    SET_SIGNED_IN,
+    SET_ERROR_MESSAGE,
+    SET_SERVER_CONNECTED,
+    SET_SOCKETPROXY,
+    SET_PLAYERS
+} from '../constants/action-types';
 //
 const serverURL = 'ws://localhost:4000';
 //
@@ -27,10 +36,10 @@ export function setServerConnected(connected) {
 export function signIn() {
     return (dispatch, getState) => {
         const s = getState().app;
-        return s.socketProxy.signIn(s.userName,s.game).then(() => {
+        return s.socketProxy.signIn(s.userName,s.game).then(({userList}) => {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
-            //dispatch(redirect('/foo'));
+            dispatch(setPlayers(userList));
         }).catch((e) => {
             console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));
@@ -95,6 +104,13 @@ export function setUserName(e) {
     return {
        type: SET_USER_NAME,
        payload: userName
+    };
+}
+
+export function setPlayers(players) {
+    return {
+        type: SET_PLAYERS,
+        payload: players
     };
 }
 
