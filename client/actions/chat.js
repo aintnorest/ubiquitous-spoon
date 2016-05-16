@@ -1,14 +1,22 @@
-import {ADD_MESSAGE, SET_MESSAGE, SET_MESSAGE_SENDING, SET_MESSAGE_ERROR} from '../constants/action-types';
+import {
+    ADD_MESSAGE,
+    SET_MESSAGE,
+    SET_PLAYERS,
+    SET_MESSAGE_SENDING,
+    SET_MESSAGE_ERROR
+} from '../constants/action-types';
 
 
 export function listenForMessages () {
     return (dispatch, getState) => {
         const socketProxy = getState().app.socketProxy;
+        const players = getState().app.players;
+        dispatch(setPlayers(players));
         socketProxy.listenToRoom((messageObject) => {
-            dispatch({
-                type: ADD_MESSAGE,
-                payload: messageObject
-            });
+            dispatch(addMessage(messageObject));
+        });
+        socketProxy.on('roomUpdate', ({userList}) => {
+            dispatch(setPlayers(userList));
         });
     };
 }
@@ -17,29 +25,15 @@ export function sendMessage () {
     return (dispatch, getState) => {
         const socketProxy = getState().app.socketProxy;
         const message = getState().chat.message;
-        dispatch({
-            type: SET_MESSAGE_SENDING,
-            payload: true
-        });
+        dispatch(setMessageSending(true));
         socketProxy.messageToRoom(message).then((messageConfirmation) => {
-            dispatch({
-                type: SET_MESSAGE_SENDING,
-                payload: false
-            });
-            dispatch({
-                type: ADD_MESSAGE,
-                payload: messageConfirmation
-            });
+            dispatch(setMessage({target: {value: null}}));
+            dispatch(setMessageSending(false));
+            dispatch(addMessage(messageConfirmation));
             console.log('Got message Confirmation: ' + JSON.stringify(messageConfirmation));
         }).catch(function(messageConfirmation) {
-            dispatch({
-                type: SET_MESSAGE_SENDING,
-                payload: false
-            });
-            dispatch({
-                type: SET_MESSAGE_ERROR,
-                payload: messageConfirmation
-            });
+            dispatch(setMessageSending(false));
+            dispatch(setMessageError(messageConfirmation));
             console.log('Never got message Confirmation: ' + JSON.stringify(messageConfirmation));
         });
     };
@@ -52,5 +46,33 @@ export function setMessage(e) {
     return {
        type: SET_MESSAGE,
        payload: message
+    };
+}
+
+export function setMessageSending(sending) {
+    return {
+        type: SET_MESSAGE_SENDING,
+        payload: sending
+    };
+}
+
+export function setMessageError(error) {
+    return {
+        type: SET_MESSAGE_ERROR,
+        payload: error
+    };
+}
+
+export function setPlayers(players) {
+    return {
+        type: SET_PLAYERS,
+        payload: players
+    };
+}
+
+export function addMessage(message) {
+    return {
+        type: ADD_MESSAGE,
+        payload: message
     };
 }

@@ -6,6 +6,7 @@ export const SET_GAME = 'SET_GAME';
 export const SET_LOADING = 'SET_LOADING';
 export const SET_SERVER_CONNECTED = 'SET_SERVER_CONNECTED';
 export const SET_SOCKETPROXY = 'SET_SOCKETPROXY';
+export const SET_PLAYERS = 'SET_PLAYERS';
 
 // CHAT
 export const SET_MESSAGE_ERROR = 'SET_MESSAGE_ERROR';

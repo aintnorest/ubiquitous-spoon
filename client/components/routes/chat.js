@@ -28,7 +28,7 @@ const Chat = React.createClass({
 
         const playersList = players.map((player) => {
             return (
-                <li key={player.id}>{player}</li>
+                <li key={player}>{player}</li>
             );
         });
 
