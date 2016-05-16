@@ -27,7 +27,10 @@ export function sendMessage () {
         const message = getState().chat.message;
         dispatch(setMessageSending(true));
         socketProxy.messageToRoom(message).then((messageConfirmation) => {
-            dispatch(setMessage({target: {value: null}}));
+            dispatch({
+               type: SET_MESSAGE,
+               payload: ''
+            });
             dispatch(setMessageSending(false));
             dispatch(addMessage(messageConfirmation));
             console.log('Got message Confirmation: ' + JSON.stringify(messageConfirmation));

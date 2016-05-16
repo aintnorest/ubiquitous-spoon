@@ -11,6 +11,7 @@ const Chat = React.createClass({
 
     render: function() {
         const {
+            userName,
             message,
             messages,
             players,
@@ -22,9 +23,20 @@ const Chat = React.createClass({
 
         const messagesList = messages.map((message) => {
             return (
-                <li key={message.id}>{`${message.sender}: ${message.msg}`}</li>
+                <li key={message.id}>
+                    {`${message.sender}: ${message.msg}`}
+                </li>
             );
         });
+
+        // show grayed out pending message
+        if (messageSending) {
+            messagesList.push((
+                <li key={message} style={{color: 'gray'}}>
+                    {`${userName}: ${message}`}
+                </li>
+            ));
+        }
 
         const playersList = players.map((player) => {
             return (
@@ -64,6 +76,6 @@ const Chat = React.createClass({
 });
 
 export default connect(
-    (state) => ({socketProxy: state.app.socketProxy, ...state.chat}),
+    (state) => ({socketProxy: state.app.socketProxy, userName: state.app.userName, ...state.chat}),
     (dispatch) => bindActionCreators(actions, dispatch)
 )(Chat);

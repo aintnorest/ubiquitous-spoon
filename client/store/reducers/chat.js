@@ -12,7 +12,7 @@ const initialState = {
     players: [],
     messageSending: false,
     messageError: null,
-    message: null
+    message: ''
 };
 
 export default createReducer(initialState, {
