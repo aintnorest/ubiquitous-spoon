@@ -18,8 +18,8 @@ Chat.prototype.addUser = function addUser(user, requestedUsername) {
     //
     if(r.response) {
         this.users[requestedUsername] = user;
-        user.signIn(requestedUsername, r);
-        this.joinRoom('mainRoom', user);
+        user.username = requestedUsername;
+        user.signIn(requestedUsername, r, this.joinRoom('mainRoom', user));
     } else user.signIn(requestedUsername, r);
 };
 //
@@ -28,6 +28,7 @@ Chat.prototype.joinRoom = function joinRoom(roomName, user, roles = {}, options 
     else this.rooms[roomName] = {userList: [user.username], roles, options};
     //
     user.joinRoom(roomName, {roomName, userList: this.rooms[roomName].userList}, this);
+    return this.rooms[roomName].userList;
 };
 //
 Chat.prototype.removeUser = function disconnect(user) {

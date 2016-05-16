@@ -8,14 +8,16 @@ const serverURL = 'ws://localhost:4000';
 //
 export function connectToServer() {
     return (dispatch) => {
+        console.log('yeah?');
         let socketProxy = new SocketProxy(serverURL);
         dispatch({type:SET_SOCKETPROXY, payload:socketProxy});
-        socketProxy.onWSopen = () => dispatch(setServerConnected(true));
-        socketProxy.onWSclose = () => dispatch(setServerConnected(false));
+        socketProxy.onWSopen(() => dispatch(setServerConnected(true)));
+        socketProxy.onWSclose(() => dispatch(setServerConnected(false)));
     };
 }
 //
 export function setServerConnected(connected) {
+    console.log('setServerConnected, ',connected);
     return {
         type: SET_SERVER_CONNECTED,
         payload: connected
