@@ -24,6 +24,7 @@ export function signIn() {
             dispatch(setSignedIn(true));
             dispatch(redirect('/foo'));
         }).catch((e) => {
+            console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));
             dispatch(setSignedIn(false));
         });
