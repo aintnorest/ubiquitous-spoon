@@ -19,6 +19,7 @@ function createGameWorld() {
     let gameObj = {};
     gameObj.renderer = new PIXI.WebGLRenderer(x,y);
     gameObj.stage = new PIXI.Container;
+    console.log('game obj pivot',gameObj.stage.pivot);
     gameObj.renderer.backgroundColor = 0xF5F5F6;
     gameObj.stage.width = 2439;
     gameObj.stage.height = 2439;
@@ -60,10 +61,10 @@ export default React.createClass({
         }
         //start the game
         this.animate();
-        document.addEventListener("keyPress", this.keyboardHandler, false);
+        document.addEventListener("keypress", this.keyboardHandler, false);
     },
     componentWillUnmount() {
-        document.removeEventListener("keyPress", this.keyboardHandler, false);
+        document.removeEventListener("keypress", this.keyboardHandler, false);
     },
 
     animate() {
@@ -82,12 +83,50 @@ export default React.createClass({
     },
 
     keyboardHandler(e) {
+        if(e.charCode == 115){
+            console.log('up');
+            this.game.stage.position.y = this.game.stage.position.y + 5;
+            this.game.renderer.render(this.game.stage);
+        } else if(e.charCode == 119) {
+            console.log('down');
+            this.game.stage.position.y = this.game.stage.position.y - 5;
+            this.game.renderer.render(this.game.stage);
+        } else if(e.charCode == 100){
+            console.log('right');
+            this.game.stage.position.x = this.game.stage.position.x + 7;
+            this.game.renderer.render(this.game.stage);
+        } else if(e.charCode == 97) {
+            console.log('left');
+            this.game.stage.position.x = this.game.stage.position.x - 7;
+            this.game.renderer.render(this.game.stage);
+        } else if(e.charCode == 114) {
+            console.log('zoom in');
+            this.game.stage.scale.x = this.game.stage.scale.x + 0.1;
+            this.game.stage.scale.y = this.game.stage.scale.y + 0.1;
+            this.game.renderer.render(this.game.stage);
+        } else if(e.charCode == 102) {
+            console.log('zoom out');
+            this.game.stage.scale.x = this.game.stage.scale.x - 0.1;
+            this.game.stage.scale.y = this.game.stage.scale.y - 0.1;
+            this.game.renderer.render(this.game.stage);
+        }
+        console.log(this.game.stage.position);
         console.log(e);
+    },
+
+    wheel(e) {
+        this.game.stage.scale.x = this.game.stage.scale.x + (e.deltaY * 0.01);
+        this.game.stage.scale.y = this.game.stage.scale.y + (e.deltaY * 0.01);
+        this.game.renderer.render(this.game.stage);
+        console.log('deltaMode: ',e.deltaMode);
+        console.log('deltaX: ',e.deltaX);
+        console.log('deltaY: ',e.deltaY);
+        console.log('deltaZ: ',e.deltaZ);
     },
 
     render() {
         return (
-            <div className="game-canvas-container" ref="gameCanvas">
+            <div onWheel={this.wheel} className="game-canvas-container" ref="gameCanvas">
             </div>
         );
     }
