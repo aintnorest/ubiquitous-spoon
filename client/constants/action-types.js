@@ -2,6 +2,7 @@
 export const SET_USER_NAME = 'SET_USER_NAME';
 export const SET_SIGNED_IN = 'SET_SIGNED_IN';
 export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
+export const SET_SERVER_CONNECTED = 'SET_SERVER_CONNECTED';
 
 // HOME
 export const SET_HOME_TITLE = 'SET_HOME_TITLE';

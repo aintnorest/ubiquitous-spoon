@@ -4,7 +4,17 @@ import * as types from '../constants/action-types';
 import SocketProxy from '../../server/tests/utils/clientSocketProxy';
 
 const serverURL = 'ws://localhost:4000';
-let socketProxy = new SocketProxy(serverURL);
+let socketProxy;
+
+// Thunks
+
+export function connectToServer() {
+    return (dispatch) => {
+        socketProxy = new SocketProxy(serverURL);
+        socketProxy.ws.onopen = () => dispatch(setServerConnected(true));
+        socketProxy.ws.onclose = () => dispatch(setServerConnected(false));
+    };
+}
 
 export function signIn() {
     return (dispatch, getState) => {
@@ -32,9 +42,18 @@ export function signOut() {
     };
 }
 
+// Normal actions
+
 export function redirect(route) {
     return push(route);
 }
+
+export function setServerConnected(connected) {
+    return {
+        type: types.SET_SERVER_CONNECTED,
+        payload: connected
+    };
+};
 
 export function setUserName(userName) {
     return {
