@@ -266,7 +266,8 @@ nav ul li a:active {
 .signin-input-wrap {
     width: 35%;
 }
-.signin-btn {
+.signin-btn, 
+.send-btn {
     @apply --z-depth-1;
     height: 36px;
     border-radius: 2px;

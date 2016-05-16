@@ -28,7 +28,6 @@ export function signIn() {
         return s.socketProxy.signIn(s.userName,s.game).then(() => {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
-            //dispatch(redirect('/foo'));
         }).catch((e) => {
             console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));

@@ -26,6 +26,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.3.0",
+    "brfs": "^1.4.3",
     "browserify": "^13.0.1",
     "css-loader": "^0.23.1",
     "file-loader": "^0.8.5",
