@@ -5,14 +5,14 @@ import * as actions from '../../actions/chat';
 import InputField from '../inputField';
 
 const Chat = React.createClass({
+    atBottom: true,
+    msgCache: [],
     componentWillMount: function() {
         this.props.listenForMessages();
     },
-
     checkKey(e) {
         if(e.charCode === 13 && this.props.message.length > 0) this.props.sendMessage();
     },
-    atBottom: true,
     componentWillUpdate() {
         if(this.refs.chatWindow != undefined) {
             let cw = this.refs.chatWindow;
@@ -38,13 +38,17 @@ const Chat = React.createClass({
             sendMessage
         } = this.props;
 
-        const messagesList = messages.map((message) => {
-            return (
-                <li key={message.id}>
-                    {`${message.sender}: ${message.msg}`}
-                </li>
-            );
-        });
+        let messagesList = [];
+        if(messages.length === this.msgCache.length) messagesList = this.msgCache;
+        else {
+            this.msgCache = messagesList = messages.map((message) => {
+                return (
+                    <li key={message.id}>
+                        {`${message.sender}: ${message.msg}`}
+                    </li>
+                );
+            });
+        }
 
         // show grayed out pending message
         if (messageSending) {

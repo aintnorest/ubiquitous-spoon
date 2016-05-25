@@ -290,8 +290,7 @@ nav ul li a:active {
 .signin-input-wrap {
     width: 35%;
 }
-.signin-btn,
-.send-btn {
+.signin-btn {
     @apply --z-depth-1;
     height: 36px;
     border-radius: 2px;
@@ -303,6 +302,11 @@ nav ul li a:active {
     margin:0.7rem;
 }
 .signin-btn:disabled {
+    @apply --z-depth-0;
+    background-color: grey;
+}
+.signin-btn:hover:disabled {
+    @apply --z-depth-0;
     background-color: grey;
 }
 
