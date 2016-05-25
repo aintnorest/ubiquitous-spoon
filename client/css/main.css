@@ -39,9 +39,24 @@
     flex-direction: column;
 }
 
+.body-Chat {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-content: stretch;
+}
 .body {
     flex: 1;
     padding: 1rem;
+}
+
+.playerList-Body {
+    width: 200px;
+}
+.chat-Body {
+    flex: 1;
+    padding-right: 1rem;
 }
 
 .nav-header {
@@ -266,7 +281,7 @@ nav ul li a:active {
 .signin-input-wrap {
     width: 35%;
 }
-.signin-btn, 
+.signin-btn,
 .send-btn {
     @apply --z-depth-1;
     height: 36px;

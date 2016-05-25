@@ -13,3 +13,6 @@ export const SET_MESSAGE_ERROR = 'SET_MESSAGE_ERROR';
 export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const SET_MESSAGE_SENDING = 'SET_MESSAGE_SENDING';
 export const SET_MESSAGE = 'SET_MESSAGE';
+
+// GAME
+export const SET_GAME_PHASE = 'SET_GAME_PHASE';

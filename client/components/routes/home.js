@@ -7,7 +7,8 @@ import { bindActionCreators } from 'redux';
 
 function Home(props) {
     let ld = Object.keys(props.loading);
-    console.log(props);
+
+    console.log('home props: ',props);
     return (
         <div className='body'>
             {
@@ -76,8 +77,8 @@ function Home(props) {
                         <div className="signin-dialog-box">
                             <div data-loader="circle" />
                             {
-                                ld.map(function(k) {
-                                    return (<div className="signin-dialog-txt">{k+" "+props.loading[k]+"%"}</div>);
+                                ld.map(function(k,n) {
+                                    return (<div key={n} className="signin-dialog-txt">{k+" "+props.loading[k]+"%"}</div>);
                                 })
                             }
                         </div>

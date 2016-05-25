@@ -40,6 +40,7 @@ export function signIn() {
             dispatch(setErrorMessage(null));
             dispatch(setSignedIn(true));
             dispatch(setPlayers(userList));
+            dispatch(push('/chat'));
         }).catch((e) => {
             console.log('error on signin: ',e);
             dispatch(setErrorMessage(e.reason));
@@ -59,15 +60,14 @@ export function setGame(game) {
             type:'Game Data', progress:0
         }});
         loadScript('static/'+game+'/index.js').then(function(d) {
-            Object.keys(gameFunctions).forEach(function(key) {
-                gameFunctions[key].sprites.forEach(function(url) {
-                    dispatch({type: SET_LOADING, payload:{
-                        type:url, progress:0
-                    }});
-                    PIXI.loader.add(url).on("progress", loadProgressHandler);
-                });
+            gameFunctions.resources.forEach(function(url) {
+                dispatch({type: SET_LOADING, payload:{
+                    type:url, progress:0
+                }});
+                PIXI.loader.add(url).on("progress", loadProgressHandler);
             });
-            PIXI.loader.load(function() {
+            PIXI.loader.load(function(d) {
+                console.log('loading: ',d);
                 dispatch({
                    type: SET_GAME,
                    payload: game
@@ -77,6 +77,7 @@ export function setGame(game) {
                 type:'Game Data', progress:100
             }});
         }).catch(function(err) {
+            console.log('err loading data: ',err);
             dispatch({type: SET_LOADING, payload:{
                 type:'Game Data', progress:-1
             }});

@@ -25,7 +25,7 @@ export default createReducer(initialState, {
     [SET_USER_NAME]: (state, userName) => ({ ...state, userName }),
     [SET_SIGNED_IN]: (state, signedIn) => ({ ...state, signedIn }),
     [SET_ERROR_MESSAGE]: (state, errorMessage) => ({ ...state, errorMessage }),
-    [SET_GAME]: (state, game) => ({...state, game}),
+    [SET_GAME]: (state, game) => ({...state, game, loading:{}}),
     [SET_LOADING]: (state, payload) => {
         console.log('set loading: ',payload);
         let s = {...state};

@@ -10,14 +10,16 @@ function appHeader(props) {
             <Link to='/' className="nav-lrg">Ubiquitous Spoon</Link>
             {props.game ? (
                 <ul className="nav-right">
-                    <li className="nav-li-itm">
-                        <Link to="chat" className="nav-sml">Chat</Link>
-                    </li>
+                    {props.signedIn ? (
+                        <li className="nav-li-itm">
+                            <Link to="chat" className="nav-sml">Chat</Link>
+                        </li>
+                    ) : null}
                     <li className="nav-li-itm">
                         <Link to='gameSpace' className="nav-sml">Game Space</Link>
                     </li>
                     <li className="nav-li-itm">
-                        {(props.signedIn) ? (
+                        {props.signedIn ? (
                             <a onClick={props.signOut}>Sign Out</a>
                         ) : (
                             <Link to='/' className="nav-sml">Sign In</Link>

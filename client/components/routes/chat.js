@@ -9,6 +9,10 @@ const Chat = React.createClass({
         this.props.listenForMessages();
     },
 
+    checkKey(e) {
+        if(e.charCode === 13 && this.props.message.length > 0) this.props.sendMessage();
+    },
+
     render: function() {
         const {
             userName,
@@ -45,8 +49,8 @@ const Chat = React.createClass({
         });
 
         return (
-            <div>
-                <div>
+            <div className="body-Chat">
+                <div className="chat-Body">
                     <h1>Chat</h1>
                     <ul>
                         {messagesList}
@@ -57,14 +61,15 @@ const Chat = React.createClass({
                         id='message'
                         error={messageError}
                         value={message}
+                        onKeyPress={this.checkKey}
                         change={setMessage}
                         label='Message'
                     />
-                    <button className='send-btn' onClick={sendMessage}>
+                    <button disabled={message.length === 0} className='signin-btn' onClick={sendMessage}>
                         Send
                     </button>
                 </div>
-                <div>
+                <div className="playerList-Body">
                     <h1>Players</h1>
                     <ul>
                         {playersList}
