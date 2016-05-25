@@ -57,6 +57,15 @@
 .chat-Body {
     flex: 1;
     padding-right: 1rem;
+    & ul {
+        margin-top: 0;
+        margin-bottom: 2em;
+        max-height: 40vh;
+        overflow: hidden;
+    }
+    & ul:hover {
+        overflow-y: auto;
+    }
 }
 
 .nav-header {

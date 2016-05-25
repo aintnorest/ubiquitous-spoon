@@ -12,6 +12,19 @@ const Chat = React.createClass({
     checkKey(e) {
         if(e.charCode === 13 && this.props.message.length > 0) this.props.sendMessage();
     },
+    atBottom: true,
+    componentWillUpdate() {
+        if(this.refs.chatWindow != undefined) {
+            let cw = this.refs.chatWindow;
+            this.atBottom = cw.scrollHeight - cw.clientHeight <= cw.scrollTop + 1;
+        }
+    },
+    componentDidUpdate() {
+        if(this.refs.chatWindow != undefined) {
+            let cw = this.refs.chatWindow;
+            if(this.atBottom) cw.scrollTop = cw.scrollHeight - cw.clientHeight;
+        }
+    },
 
     render: function() {
         const {
@@ -52,7 +65,7 @@ const Chat = React.createClass({
             <div className="body-Chat">
                 <div className="chat-Body">
                     <h1>Chat</h1>
-                    <ul>
+                    <ul ref='chatWindow'>
                         {messagesList}
                     </ul>
                     <InputField
