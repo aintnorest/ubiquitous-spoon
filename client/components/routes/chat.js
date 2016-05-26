@@ -5,8 +5,25 @@ import * as actions from '../../actions/chat';
 import InputField from '../inputField';
 
 const Chat = React.createClass({
+    atBottom: true,
+    msgCache: [],
     componentWillMount: function() {
         this.props.listenForMessages();
+    },
+    checkKey(e) {
+        if(e.charCode === 13 && this.props.message.length > 0) this.props.sendMessage();
+    },
+    componentWillUpdate() {
+        if(this.refs.chatWindow != undefined) {
+            let cw = this.refs.chatWindow;
+            this.atBottom = cw.scrollHeight - cw.clientHeight <= cw.scrollTop + 1;
+        }
+    },
+    componentDidUpdate() {
+        if(this.refs.chatWindow != undefined) {
+            let cw = this.refs.chatWindow;
+            if(this.atBottom) cw.scrollTop = cw.scrollHeight - cw.clientHeight;
+        }
     },
 
     render: function() {
@@ -21,13 +38,17 @@ const Chat = React.createClass({
             sendMessage
         } = this.props;
 
-        const messagesList = messages.map((message) => {
-            return (
-                <li key={message.id}>
-                    {`${message.sender}: ${message.msg}`}
-                </li>
-            );
-        });
+        let messagesList = [];
+        if(messages.length === this.msgCache.length) messagesList = this.msgCache;
+        else {
+            this.msgCache = messagesList = messages.map((message) => {
+                return (
+                    <li key={message.id}>
+                        {`${message.sender}: ${message.msg}`}
+                    </li>
+                );
+            });
+        }
 
         // show grayed out pending message
         if (messageSending) {
@@ -45,10 +66,10 @@ const Chat = React.createClass({
         });
 
         return (
-            <div>
-                <div>
+            <div className="body-Chat">
+                <div className="chat-Body">
                     <h1>Chat</h1>
-                    <ul>
+                    <ul ref='chatWindow'>
                         {messagesList}
                     </ul>
                     <InputField
@@ -57,14 +78,15 @@ const Chat = React.createClass({
                         id='message'
                         error={messageError}
                         value={message}
+                        onKeyPress={this.checkKey}
                         change={setMessage}
                         label='Message'
                     />
-                    <button className='send-btn' onClick={sendMessage}>
+                    <button disabled={message.length === 0} className='signin-btn' onClick={sendMessage}>
                         Send
                     </button>
                 </div>
-                <div>
+                <div className="playerList-Body">
                     <h1>Players</h1>
                     <ul>
                         {playersList}

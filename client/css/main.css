@@ -39,9 +39,33 @@
     flex-direction: column;
 }
 
+.body-Chat {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-content: stretch;
+}
 .body {
     flex: 1;
     padding: 1rem;
+}
+
+.playerList-Body {
+    width: 200px;
+}
+.chat-Body {
+    flex: 1;
+    padding-right: 1rem;
+    & ul {
+        margin-top: 0;
+        margin-bottom: 2em;
+        max-height: 40vh;
+        overflow: hidden;
+    }
+    & ul:hover {
+        overflow-y: auto;
+    }
 }
 
 .nav-header {
@@ -266,8 +290,7 @@ nav ul li a:active {
 .signin-input-wrap {
     width: 35%;
 }
-.signin-btn, 
-.send-btn {
+.signin-btn {
     @apply --z-depth-1;
     height: 36px;
     border-radius: 2px;
@@ -279,6 +302,11 @@ nav ul li a:active {
     margin:0.7rem;
 }
 .signin-btn:disabled {
+    @apply --z-depth-0;
+    background-color: grey;
+}
+.signin-btn:hover:disabled {
+    @apply --z-depth-0;
     background-color: grey;
 }
 

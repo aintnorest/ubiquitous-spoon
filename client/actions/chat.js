@@ -33,22 +33,17 @@ export function sendMessage () {
             });
             dispatch(setMessageSending(false));
             dispatch(addMessage(messageConfirmation));
-            console.log('Got message Confirmation: ' + JSON.stringify(messageConfirmation));
         }).catch(function(messageConfirmation) {
             dispatch(setMessageSending(false));
             dispatch(setMessageError(messageConfirmation));
-            console.log('Never got message Confirmation: ' + JSON.stringify(messageConfirmation));
         });
     };
 }
 
 export function setMessage(e) {
-    let message;
-    if (e.target) message = e.target.value;
-    else message = e;
     return {
        type: SET_MESSAGE,
-       payload: message
+       payload: (e.target) ? e.target.value : e
     };
 }
 
