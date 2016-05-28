@@ -2,16 +2,17 @@ import Chat from '../utils/chat';
 import User from '../utils/user';
 //Init Chat Obj, Connection Listener & Error Listener
 export default function(wss) {
-    let chat = new Chat({ 'mainRoom': {userList:[], roles:{}, options:{ permanent:true } } });
-    wss.on('connection', onConnect(chat));
+    let chatRooms = {};
+    wss.on('connection', onConnect(chatRooms));
     wss.on('error', function(err) { console.log('Web Socket Server Error: ',err); });
 }
 //
-function onConnect(chat) {
+function onConnect(chatRooms) {
+    let chat;
     return function(ws) {
         let user = new User(ws, function() {
             /* On connection close */
-            chat.removeUser(user);
+            //chat.removeUser(user);
             user.wsp.close();
         });
         let wsp = user.wsp;
@@ -28,7 +29,14 @@ function onConnect(chat) {
          *  reason
          * }
          */
-        wsp.on('signIn', function(requestedUsername) {console.log('requestedUsername: ',requestedUsername); chat.addUser(user, requestedUsername); });
+        wsp.on('signIn', function({requestedUsername, gameName}) {
+            if(chatRooms[gameName]) chat = chatRooms[gameName];
+            else chat = chatRooms[gameName] = new Chat({ 'mainRoom': {userList:[], roles:{}, options:{ permanent:true } } });
+            user.wsp.onClose.push(function() {
+                chat.removeUser(user);
+            });
+            chat.addUser(user, requestedUsername);
+        });
         /**
          * @endpoint messageToRoom - send message to the current room.
          *

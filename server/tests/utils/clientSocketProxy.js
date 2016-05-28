@@ -201,7 +201,7 @@ SocketProxy.prototype.disconnect = function() { this.ws.close(); };
  *      reason: {String} "Reason why it wasn't accepted"
  *  }
  */
-SocketProxy.prototype.signIn = function(requestedUsername) {
+SocketProxy.prototype.signIn = function(requestedUsername, gameName) {
     let self = this;
     let signInHandlerUnsub, tO;
     return new Promise(function(resolve, reject) {
@@ -216,7 +216,7 @@ SocketProxy.prototype.signIn = function(requestedUsername) {
         };
         signInHandlerUnsub = self.on('signIn',signInHandler);
         tO = setTimeout(function(){ reject('Timeout'); signInHandlerUnsub(); },20000);
-        self.emit('signIn', requestedUsername);
+        self.emit('signIn', {requestedUsername, gameName});
     });
 };
 /**

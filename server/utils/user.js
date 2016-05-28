@@ -21,8 +21,11 @@ function NWS(ws, cleanup) {
             }
         });
     });
+    this.onClose = [cleanup];
     this.ws.on('close', function(){
-        cleanup();
+        self.onClose.forEach((c) => {
+            c();
+        });
     });
 }
 //

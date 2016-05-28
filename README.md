@@ -18,5 +18,15 @@
     - redux for state management.
     - Pixi.js for the view layer of the game space.
 
+## To Do
+ - Add request for game.
+ - Fix chat so that it is by game instead of global
+ - Clean up & organize css.
+ - Implement Simple Chess game.
+ - Add universal rendering.
+ - Implement service worker for faster game asset loading
+ - Add ability to send private messages
+ - Add web app manifest
+
 ## Browser Support
  Latest Chrome at least to start
