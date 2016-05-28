@@ -16,7 +16,9 @@
   "scripts": {
     "build": "NODE_ENV=development webpack --watch",
     "buildProduction": "NODE_ENV=production webpack --watch",
-    "test": "browserify -t babelify actions/*.test.js | tape-run | tap-notify | tap-spec"
+    "test": "browserify -t babelify actions/*.test.js | tape-run | tap-notify | tap-spec",
+    "lint": "jshint .",
+    "validate": "npm ls"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",
@@ -45,5 +47,10 @@
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta.2"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }

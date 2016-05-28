@@ -10,8 +10,9 @@ const Chat = React.createClass({
     componentWillMount: function() {
         this.props.listenForMessages();
     },
-    checkKey(e) {
-        if(e.charCode === 13 && this.props.message.length > 0) this.props.sendMessage();
+    validate(e) {
+        e.preventDefault();
+        if(this.props.message.trim().length > 0) this.props.sendMessage();
     },
     componentWillUpdate() {
         if(this.refs.chatWindow != undefined) {
@@ -72,19 +73,20 @@ const Chat = React.createClass({
                     <ul ref='chatWindow'>
                         {messagesList}
                     </ul>
-                    <InputField
-                        type='text'
-                        placeholder='message'
-                        id='message'
-                        error={messageError}
-                        value={message}
-                        onKeyPress={this.checkKey}
-                        change={setMessage}
-                        label='Message'
-                    />
-                    <button disabled={message.length === 0} className='signin-btn' onClick={sendMessage}>
-                        Send
-                    </button>
+                    <form onSubmit={this.validate} autoComplete="off">
+                        <InputField
+                            type='text'
+                            placeholder='message'
+                            id='message'
+                            error={messageError}
+                            value={message}
+                            change={setMessage}
+                            label='Message'
+                        />
+                        <button disabled={message.trim().length === 0} className='signin-btn' type="submit">
+                            Send
+                        </button>
+                    </form>
                 </div>
                 <div className="playerList-Body">
                     <h1>Players</h1>
