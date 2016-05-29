@@ -3,7 +3,7 @@
 
  Didn't want to waste time trying to name it, ubiquitous-spoon was githubs random pick.
 # MVP GOALS
- - Very simple chat for the purposes of finding people to play with.
+ - ~~Very simple chat for the purposes of finding people to play with.~~
  - Establish a peer to peer connection between the people playing.
  - Draggable circles that represent models in game.
  - Shared play space that updates real time using the peer to peer connection.
@@ -20,8 +20,9 @@
 
 ## To Do
  - Add request for game.
- - Fix chat so that it is by game instead of global
+ - ~~Fix chat so that it is by game instead of global~~
  - Clean up & organize css.
+ - Make the site more responsive.
  - Implement Simple Chess game.
  - Add universal rendering.
  - Implement service worker for faster game asset loading
