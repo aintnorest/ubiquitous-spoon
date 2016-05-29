@@ -1,5 +1,6 @@
 import React from 'react';
-import warmahordes from '../../images/warmahordes.png'
+import warmahordes from '../../images/warmahordes.png';
+import chess from '../../images/chess.png';
 import { setGame, setUserName, signIn } from '../../actions/app';
 import { connect } from 'react-redux';
 import InputField from '../inputField';
@@ -28,15 +29,15 @@ function Home(props) {
                         <ul className="btnless-list">
                             <li>
                                 <div className="card-image">
-                                    <img src={warmahordes} alt='warmahordes'/>
-                                    <span className="card-title">WarmaHordes</span>
+                                    <img src={chess} alt='chess'/>
+                                    <span className="card-title">Chess</span>
                                 </div>
                                 <div className="card-content">
-                                    Warmachine and Hordes are tabletop war games produced by Privateer Press.
+                                    Chess is a two-player strategy board game played on a checkered gameboard with an eight-by-eight grid.
                                 </div>
                                 <div className="card-action">
-                                    <a onClick={() => props.setGame('warmachine')}>Select Game</a>
-                                    <a href="http://privateerpress.com/">Read More</a>
+                                    <a onClick={() => props.setGame('chess')}>Select Game</a>
+                                    <a href="https://en.wikipedia.org/wiki/Chess">Read More</a>
                                 </div>
                             </li>
                             <li>
@@ -45,7 +46,7 @@ function Home(props) {
                                     <span className="card-title">WarmaHordes</span>
                                 </div>
                                 <div className="card-content">
-                                    Warmachine and Hordes are tabletop war games produced by Privateer Press.
+                                    Warmachine and Hordes are tabletop skirmish war games produced by Privateer Press.
                                 </div>
                                 <div className="card-action">
                                     <a onClick={() => props.setGame('warmachine')}>Select Game</a>

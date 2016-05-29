@@ -155,6 +155,7 @@ nav ul li a:active {
         display: block;
         border-radius: 2px 2px 0 0;
         position: relative;
+        max-height: 247px;
         left: 0;
         right: 0;
         top: 0;

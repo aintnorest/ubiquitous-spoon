@@ -1,0 +1,28 @@
+{"frames": {
+
+"Chess_Pieces_Sprite.svg.png":
+{
+	"frame": {"x":0,"y":0,"w":2000,"h":667},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":667},
+	"sourceSize": {"w":2000,"h":667}
+},
+"chessBoard.png":
+{
+	"frame": {"x":0,"y":667,"w":600,"h":600},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":600,"h":600},
+	"sourceSize": {"w":600,"h":600}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "chess.png",
+	"format": "RGBA8888",
+	"size": {"w":2000,"h":1267},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2a9469049b3e5333604e6b4301c897b8:bb188b8f5d097319fc5dac5ee18e0648:cc5d37dd548b50476bee27f9b6ec2a83$"
+}
+}

@@ -7,7 +7,7 @@ import { signOut } from '../actions/app';
 function appHeader(props) {
     return (
         <nav className='nav-header'>
-            <Link to='/' className="nav-lrg">Ubiquitous Spoon</Link>
+            <Link to='/' className="nav-lrg">Ubiquitous Table</Link>
             {props.game ? (
                 <ul className="nav-right">
                     {props.signedIn ? (

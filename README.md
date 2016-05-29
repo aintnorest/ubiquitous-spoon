@@ -1,7 +1,8 @@
-# ubiquitous-spoon
+# Ubiquitous-Table
  The goal is to make a web based alternative to http://www.vassalengine.org/ . I appreciate the creators of vassal but it can be horribly slow and is, at least for me, riddled with connection issues. Myself Chris Alatorre & Chris Dopuch are the main contributors at this time and as our primary use of vassal is warmachine / hordes our feature development once we're past the MVP milestone will probably be geared towards that.
 
- Didn't want to waste time trying to name it, ubiquitous-spoon was githubs random pick.
+ Didn't want to waste time trying to name it, ubiquitous-spoon was githubs random pick. After a bit I thought, not as a final name, but as a small change Ubiquitous-Table might make it more descriptive.
+
 # MVP GOALS
  - ~~Very simple chat for the purposes of finding people to play with.~~
  - Establish a peer to peer connection between the people playing.
