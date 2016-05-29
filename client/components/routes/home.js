@@ -46,7 +46,7 @@ function Home(props) {
                                     <span className="card-title">WarmaHordes</span>
                                 </div>
                                 <div className="card-content">
-                                    Warmachine and Hordes are tabletop skirmish war games produced by Privateer Press.
+                                    Warmachine and Hordes are tabletop skirmish sized war games produced by Privateer Press &reg;
                                 </div>
                                 <div className="card-action">
                                     <a onClick={() => props.setGame('warmachine')}>Select Game</a>
