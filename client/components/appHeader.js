@@ -1,4 +1,5 @@
 import React from 'react';
+import toolBox from '../images/toolBox.png';
 import { Link } from 'react-router'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

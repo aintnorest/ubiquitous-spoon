@@ -6,8 +6,13 @@ import PIXI from 'pixi.js'
 //
 const GameSpace = React.createClass({
     componentDidMount() {
+        let self = this;
         this.game = new gameWorld({tableSize:[2439,2439]});
         this.refs.gameCanvas.appendChild(this.game.renderer.view);
+        window.addEventListener('resize', () => {
+            console.log('resize');
+            self.game.resizeToolbarOpen.call(self.game);
+        });
 
         /*
         this.game.models = new PIXI.ParticleContainer;
@@ -39,7 +44,7 @@ const GameSpace = React.createClass({
     setup() {
 
         this.game.models = new PIXI.ParticleContainer;
-        this.game.gameSpace.addChild(this.game.models);
+        this.game.stage.addChild(this.game.models);
         //
         this.trolls = PIXI.loader.resources["static/warmachine/trolls.json"].textures;
         for(let i = 0; i < 2000; i++) {
@@ -70,7 +75,7 @@ const GameSpace = React.createClass({
     keyboardHandler(e) {
         if(e.charCode == 115){
             console.log('up');
-            this.game.gameSpace.position.y = this.game.gameSpace.position.y + 5;
+            this.game.stage.position.y = this.game.stage.position.y + 5;
             this.game.renderer.render(this.game.stage);
         } else if(e.charCode == 119) {
             console.log('down');
@@ -78,21 +83,21 @@ const GameSpace = React.createClass({
             this.game.renderer.render(this.game.stage);
         } else if(e.charCode == 100){
             console.log('right');
-            this.game.gameSpace.position.x = this.game.gameSpace.position.x + 7;
+            this.game.stage.position.x = this.game.stage.position.x + 7;
             this.game.renderer.render(this.game.stage);
         } else if(e.charCode == 97) {
             console.log('left');
-            this.game.gameSpace.position.x = this.game.gameSpace.position.x - 7;
+            this.game.stage.position.x = this.game.stage.position.x - 7;
             this.game.renderer.render(this.game.stage);
         } else if(e.charCode == 114) {
             console.log('zoom in');
-            this.game.gameSpace.scale.x = this.game.gameSpace.scale.x + 0.1;
-            this.game.gameSpace.scale.y = this.game.gameSpace.scale.y + 0.1;
+            this.game.stage.scale.x = this.game.stage.scale.x + 0.1;
+            this.game.stage.scale.y = this.game.stage.scale.y + 0.1;
             this.game.renderer.render(this.game.stage);
         } else if(e.charCode == 102) {
             console.log('zoom out');
-            this.game.gameSpace.scale.x = this.game.gameSpace.scale.x - 0.1;
-            this.game.gameSpace.scale.y = this.game.gameSpace.scale.y - 0.1;
+            this.game.stage.scale.x = this.game.stage.scale.x - 0.1;
+            this.game.stage.scale.y = this.game.stage.scale.y - 0.1;
             this.game.renderer.render(this.game.stage);
         }
     },
@@ -121,17 +126,17 @@ const GameSpace = React.createClass({
         let dX = this.prevMsPst[0] - e.clientX;
         let dY = this.prevMsPst[1] - e.clientY;
         this.prevMsPst = [e.clientX,e.clientY];
-        this.game.gameSpace.position.y = this.game.gameSpace.position.y + (dY * this.game.gameSpace.scale.x);
-        this.game.gameSpace.position.x = this.game.gameSpace.position.x + (dX * this.game.gameSpace.scale.x);
+        this.game.stage.position.y = this.game.stage.position.y + (dY * this.game.stage.scale.x);
+        this.game.stage.position.x = this.game.stage.position.x + (dX * this.game.stage.scale.x);
         this.game.renderer.render(this.game.stage);
     },
 
     wheel(e) {
-        let scale = this.game.gameSpace.scale.x + (e.deltaY * 0.01);
+        let scale = this.game.stage.scale.x + (e.deltaY * 0.01);
         if(scale < 0.3) scale = 0.3;
         else if(scale > 3) scale = 3;
-        this.game.gameSpace.scale.x = scale;
-        this.game.gameSpace.scale.y = scale;
+        this.game.stage.scale.x = scale;
+        this.game.stage.scale.y = scale;
         /*SHOULD BE ABLE TO REMOVE ONCE WE HAVE A LOOP */
         this.game.renderer.render(this.game.stage);
         e.preventDefault();
@@ -139,7 +144,10 @@ const GameSpace = React.createClass({
 
     render() {
         return (
-            <div onWheel={this.wheel} className="game-canvas-container" ref="gameCanvas">
+            <div className="game-space-container">
+                <div className="game-toolbar-container">toolbar</div>
+                <div onWheel={this.wheel} className="game-canvas-container" ref="gameCanvas">
+                </div>
             </div>
         );
     }
