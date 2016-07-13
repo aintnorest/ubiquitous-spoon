@@ -22,13 +22,16 @@
 ## To Do
  - Add request for game.
  - ~~Fix chat so that it is by game instead of global~~
- - Clean up & organize css.
+ - Clean up & organize css. Thinking ITCSS for organization.
+    - http://www.creativebloq.com/web-design/manage-large-css-projects-itcss-101517528
+    - https://medium.com/@shaunbent/css-at-bbc-sport-part-1-bab546184e66#.81r9rdhpz
  - Make the site more responsive.
  - Implement Simple Chess game.
  - Add universal rendering.
  - Implement service worker for faster game asset loading
  - Add ability to send private messages
  - Add web app manifest
-
+ - Switch chat listener off the component and onto the action / store
+ - Make the chat clear when you sign in and out.
 ## Browser Support
  Latest Chrome at least to start

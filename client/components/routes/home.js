@@ -20,7 +20,9 @@ function Home(props) {
                         <div className='signin-input-wrap'>
                             <InputField type='text' placeholder='' error={props.errorMessage} value={props.userName} change={props.setUserName} id='username' label='Username'/>
                         </div>
-                        <button disabled={!props.serverConnected} className="signin-btn" onClick={props.signIn}>Sign In</button>
+                        <div style={{width:'85px', height:'50px'}}>
+                            <button onMouseMove={(e)=>{e.preventDefault();}} disabled={!props.serverConnected} className="signin-btn" onClick={props.signIn}>Sign In</button>
+                        </div>
                     </div>
                     )
                 ) : (

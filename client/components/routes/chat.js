@@ -8,7 +8,8 @@ const Chat = React.createClass({
     atBottom: true,
     msgCache: [],
     componentWillMount: function() {
-        this.props.listenForMessages();
+        //this.props.listenForMessages();
+        console.log("LISTEN : ",this.props.listenForMessages())
     },
     validate(e) {
         e.preventDefault();

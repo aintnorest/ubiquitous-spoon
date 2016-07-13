@@ -12,12 +12,14 @@ export function listenForMessages () {
         const socketProxy = getState().app.socketProxy;
         const players = getState().app.players;
         dispatch(setPlayers(players));
-        socketProxy.listenToRoom((messageObject) => {
+        let listeners = {};
+        listeners.room = socketProxy.listenToRoom((messageObject) => {
             dispatch(addMessage(messageObject));
         });
-        socketProxy.on('roomUpdate', ({userList}) => {
+        listeners.update = socketProxy.on('roomUpdate', ({userList}) => {
             dispatch(setPlayers(userList));
         });
+        return listeners
     };
 }
 
